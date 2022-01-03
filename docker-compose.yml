@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  ejabberd:
+    build: .
+    ports:
+      - "5222:5222"
+      - "5269:5269"
+      - "5280:5280"
+    volumes:
+      - "./conf:/opt/ejabberd/conf"
