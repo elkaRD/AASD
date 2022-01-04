@@ -1,5 +1,5 @@
 from domain.objects.movable import AbstractMovable
 
 
-class Drone(AbstractMovable):
+class Animal(AbstractMovable):
     pass

@@ -5,6 +5,7 @@ from spade.behaviour import OneShotBehaviour
 from spade.message import Message
 from spade.template import Template
 
+from domain.controllers.animal_controller import AnimalController
 from domain.controllers.drone_controller import DroneController
 from domain.environment import Environment
 
@@ -76,9 +77,15 @@ if __name__ == "__main__":
     #         break
     # print("Agents finished")
     environment = Environment()
+
     drone1 = DroneController(environment, 0, 0)
     drone2 = DroneController(environment, 10, 10)
-    drone1.move(1, 5)
-    drone2.move(-10, 5)
-    print(drone1.get_position())
-    print(drone2.get_position())
+
+    animal1 = AnimalController(environment, 5, 5)
+    animal2 = AnimalController(environment, 4, 4)
+
+    print(drone1.detect_wild_animals(5))
+
+    drone1.move(3, 3)
+
+    print(drone1.detect_wild_animals(5))
