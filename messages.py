@@ -124,7 +124,7 @@ class SearchingStatusBody(MessageBase):  # Powiadomienie o stanie przeszukiwania
         return message
 
 
-class SearchingDirectives(MessageBase):  # Powiadomienie o odebraniu raportu
+class SearchingDirectivesBody(MessageBase):  # Powiadomienie o odebraniu raportu
     keep_schedule: bool
     change_direction: Optional[Coordinates]
 
@@ -138,7 +138,7 @@ class SearchingDirectives(MessageBase):  # Powiadomienie o odebraniu raportu
 # Czwarty i piąty diagram kolaboracji
 
 
-class DockOccupationReport(MessageBase):  # Powiadomienie o zmianie zajętości stacji dokującej
+class DockOccupationReportBody(MessageBase):  # Powiadomienie o zmianie zajętości stacji dokującej
     total_docks: int
     status: List[Dock]
 
