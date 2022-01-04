@@ -1,10 +1,12 @@
 import os
-import time
 
 from spade.agent import Agent
 from spade.behaviour import OneShotBehaviour
 from spade.message import Message
 from spade.template import Template
+
+from domain.controllers.drone_controller import DroneController
+from domain.environment import Environment
 
 SERVER_HOST = os.getenv("SERVER_HOST", "localhost")
 
@@ -59,17 +61,24 @@ class ReceiverAgent(Agent):
 
 
 if __name__ == "__main__":
-    receiveragent = ReceiverAgent(f"receiver@{SERVER_HOST}", "password")
-    future = receiveragent.start()
-    future.result()  # wait for receiver agent to be prepared.
-    senderagent = SenderAgent(f"sender@{SERVER_HOST}", "password")
-    senderagent.start()
+    # receiveragent = ReceiverAgent(f"receiver@{SERVER_HOST}", "password")
+    # future = receiveragent.start()
+    # future.result()  # wait for receiver agent to be prepared.
+    # senderagent = SenderAgent(f"sender@{SERVER_HOST}", "password")
+    # senderagent.start()
 
-    while receiveragent.is_alive():
-        try:
-            time.sleep(1)
-        except KeyboardInterrupt:
-            senderagent.stop()
-            receiveragent.stop()
-            break
-    print("Agents finished")
+    # while receiveragent.is_alive():
+    #     try:
+    #         time.sleep(1)
+    #     except KeyboardInterrupt:
+    #         senderagent.stop()
+    #         receiveragent.stop()
+    #         break
+    # print("Agents finished")
+    environment = Environment()
+    drone1 = DroneController(environment, 0, 0)
+    drone2 = DroneController(environment, 10, 10)
+    drone1.move(1, 5)
+    drone2.move(-10, 5)
+    print(drone1.get_position())
+    print(drone2.get_position())
