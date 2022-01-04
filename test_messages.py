@@ -70,3 +70,21 @@ def test_help_offer_response():
     
     after_deserialization = HelpResponseBody.parse_raw(message.body)
     assert message_body == after_deserialization
+
+
+def test_replying():
+    message_body = HelpOfferBody(
+        time=datetime(2022, 1, 1, 12, 0, 30),
+        position=Coordinates(
+            lat=-10.0,
+            long=20.0,
+        ),
+        eta=180.0,
+    )
+    message = message_body.make_message("recv3@localhost", "sender3@localhost")
+
+    response_body = HelpResponseBody(help_accepted=True)
+    response = response_body.make_response(message)
+
+    assert str(response.to) == "sender3@localhost"
+    assert str(response.sender) == "recv3@localhost"
