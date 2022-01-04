@@ -1,17 +1,26 @@
+import os
 import time
+
 from spade.agent import Agent
 from spade.behaviour import OneShotBehaviour
 from spade.message import Message
 from spade.template import Template
+
+SERVER_HOST = os.getenv("SERVER_HOST", "localhost")
 
 
 class SenderAgent(Agent):
     class InformBehav(OneShotBehaviour):
         async def run(self):
             print("InformBehav running")
-            msg = Message(to="receiver@localhost")     # Instantiate the message
-            msg.set_metadata("performative", "inform")  # Set the "inform" FIPA performative
-            msg.body = "Hello World"                    # Set the message content
+            msg = Message(
+                to=f"receiver@{SERVER_HOST}"
+            )  # Instantiate the message
+            msg.set_metadata(
+                "performative",
+                "inform"
+            )  # Set the "inform" FIPA performative
+            msg.body = "Hello World"  # Set the message content
 
             await self.send(msg)
             print("Message sent!")
@@ -24,12 +33,15 @@ class SenderAgent(Agent):
         b = self.InformBehav()
         self.add_behaviour(b)
 
+
 class ReceiverAgent(Agent):
     class RecvBehav(OneShotBehaviour):
         async def run(self):
             print("RecvBehav running")
 
-            msg = await self.receive(timeout=10) # wait for a message for 10 seconds
+            msg = await self.receive(
+                timeout=10
+            )  # wait for a message for 10 seconds
             if msg:
                 print("Message received with content: {}".format(msg.body))
             else:
@@ -46,12 +58,11 @@ class ReceiverAgent(Agent):
         self.add_behaviour(b, template)
 
 
-
 if __name__ == "__main__":
-    receiveragent = ReceiverAgent("receiver@localhost", "password")
+    receiveragent = ReceiverAgent(f"receiver@{SERVER_HOST}", "password")
     future = receiveragent.start()
-    future.result() # wait for receiver agent to be prepared.
-    senderagent = SenderAgent("sender@localhost", "password")
+    future.result()  # wait for receiver agent to be prepared.
+    senderagent = SenderAgent(f"sender@{SERVER_HOST}", "password")
     senderagent.start()
 
     while receiveragent.is_alive():
