@@ -8,7 +8,7 @@ from spade.message import Message
 from spade.template import Template
 
 SERVER_HOST = os.getenv("SERVER_HOST", "localhost")
-import messages
+import messages as messages
 
 
 class SenderAgent(Agent):
