@@ -1,6 +1,0 @@
-acl:
-  admin:
-    user: admin@localhost
-access_rules:
-  configure:
-    allow: admin
