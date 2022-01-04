@@ -2,10 +2,16 @@ version: "3.9"
 
 services:
   ejabberd:
-    build: .
+    build: ./ejabberd/
     ports:
       - "5222:5222"
       - "5269:5269"
       - "5280:5280"
-    volumes:
-      - "./conf:/opt/ejabberd/conf"
+    environment:
+      - "EJABBERD_ADMIN_PASSWORD=${EJABBERD_ADMIN_PASSWORD:-admin}"
+  client:
+    build: ./client/
+    depends_on:
+      - ejabberd
+    environment:
+      - "SERVER_HOST=ejabberd"
