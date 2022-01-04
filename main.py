@@ -1,17 +1,23 @@
+from datetime import datetime
 import time
 from spade.agent import Agent
 from spade.behaviour import OneShotBehaviour
 from spade.message import Message
 from spade.template import Template
 
+import messages
+
 
 class SenderAgent(Agent):
     class InformBehav(OneShotBehaviour):
         async def run(self):
             print("InformBehav running")
-            msg = Message(to="receiver@localhost")     # Instantiate the message
-            msg.set_metadata("performative", "inform")  # Set the "inform" FIPA performative
-            msg.body = "Hello World"                    # Set the message content
+            body = messages.HelpRequestBody(
+                time=datetime.now(),
+                position=messages.Coordinates(lat=1.0, long=2.0),
+                urgency=messages.UrgencyEnum.HIGH,
+            )
+            msg = body.make_message("receiver@localhost", "sender@localhost")
 
             await self.send(msg)
             print("Message sent!")
@@ -42,7 +48,7 @@ class ReceiverAgent(Agent):
         print("ReceiverAgent started")
         b = self.RecvBehav()
         template = Template()
-        template.set_metadata("performative", "inform")
+        template.set_metadata("performative", "request")
         self.add_behaviour(b, template)
 
 
