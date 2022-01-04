@@ -9,15 +9,17 @@ ONTOLOGY = "aasd_drones_boarder"
 LANGUAGE = "aasd_boarder_lang"
 
 
-def set_default_metadata(msg: Message) -> None:
-    msg.set_metadata("ontology", ONTOLOGY)
-    msg.set_metadata("language", LANGUAGE)
-
-
 class MessageBase(BaseModel):
     def make_message(self, to: str, sender: str) -> Message:
         pass
 
+    def make_response(self, message: Message) -> Message:
+        return self.make_message(to=str(message.sender), sender=str(message.to))
+    
+    def set_default_metadata(self, msg: Message) -> None:
+        msg.set_metadata("ontology", ONTOLOGY)
+        msg.set_metadata("language", LANGUAGE)
+        msg.set_metadata("body_type", self.__class__.__name__)
 
 class Coordinates(BaseModel):
     lat: float
@@ -38,7 +40,7 @@ class HelpRequestBody(MessageBase):
     def make_message(self, to: str, sender: str) -> Message:
         message = Message(to=to, sender=sender)
         message.set_metadata("performative", "request")
-        set_default_metadata(message)
+        self.set_default_metadata(message)
         message.body = self.json()
 
         return message
@@ -52,7 +54,7 @@ class HelpOfferBody(MessageBase):
     def make_message(self, to: str, sender: str) -> Message:
         message = Message(to=to, sender=sender)
         message.set_metadata("performative", "agree")
-        set_default_metadata(message)
+        self.set_default_metadata(message)
         message.body = self.json()
 
         return message
@@ -64,7 +66,7 @@ class HelpResponseBody(MessageBase):
     def make_message(self, to: str, sender: str) -> Message:
         message = Message(to=to, sender=sender)
         message.set_metadata("performative", "inform")
-        set_default_metadata(message)
+        self.set_default_metadata(message)
         message.body = self.json()
 
         return message

@@ -20,6 +20,7 @@ def test_help_request():
         "performative": "request",
         'language': 'aasd_boarder_lang',
         'ontology': 'aasd_drones_boarder',
+        "body_type": "HelpRequestBody",
     }
     
     after_deserialization = HelpRequestBody.parse_raw(message.body)
@@ -44,6 +45,7 @@ def test_help_offer():
         "performative": "agree",
         'language': 'aasd_boarder_lang',
         'ontology': 'aasd_drones_boarder',
+        "body_type": "HelpOfferBody",
     }
     
     after_deserialization = HelpOfferBody.parse_raw(message.body)
@@ -63,6 +65,7 @@ def test_help_offer_response():
         "performative": "inform",
         'language': 'aasd_boarder_lang',
         'ontology': 'aasd_drones_boarder',
+        "body_type": "HelpResponseBody",
     }
     
     after_deserialization = HelpResponseBody.parse_raw(message.body)
