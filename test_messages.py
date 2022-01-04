@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from messages import HelpRequestBody, HelpOfferBody, HelpOfferResponse, Coordinates, UrgencyEnum
+from messages import HelpRequestBody, HelpOfferBody, HelpResponseBody, Coordinates, UrgencyEnum
 
 def test_help_request():
     message_body = HelpRequestBody(
@@ -51,7 +51,7 @@ def test_help_offer():
 
 
 def test_help_offer_response():
-    message_body = HelpOfferResponse(
+    message_body = HelpResponseBody(
         help_accepted=True,
     )
 
@@ -65,5 +65,5 @@ def test_help_offer_response():
         'ontology': 'aasd_drones_boarder',
     }
     
-    after_deserialization = HelpOfferResponse.parse_raw(message.body)
+    after_deserialization = HelpResponseBody.parse_raw(message.body)
     assert message_body == after_deserialization

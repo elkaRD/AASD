@@ -58,7 +58,7 @@ class HelpOfferBody(MessageBase):
         return message
 
 
-class HelpOfferResponse(MessageBase):
+class HelpResponseBody(MessageBase):
     help_accepted: bool
 
     def make_message(self, to: str, sender: str) -> Message:
