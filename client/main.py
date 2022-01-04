@@ -1,5 +1,5 @@
-import os
 from datetime import datetime
+import os
 import time
 
 from spade.agent import Agent
@@ -7,20 +7,21 @@ from spade.behaviour import OneShotBehaviour
 from spade.message import Message
 from spade.template import Template
 
+from messages import Coordinates, HelpOfferBody
+
 SERVER_HOST = os.getenv("SERVER_HOST", "localhost")
-import messages as messages
 
 
 class SenderAgent(Agent):
     class InformBehav(OneShotBehaviour):
         async def run(self):
             print("InformBehav running")
-            body = messages.HelpRequestBody(
+            body = HelpOfferBody(
                 time=datetime.now(),
-                position=messages.Coordinates(lat=1.0, long=2.0),
-                urgency=messages.UrgencyEnum.HIGH,
+                position=Coordinates(lat=10.0, long=4.4),
+                eta=20,
             )
-            msg = body.make_message("receiver@{SERVER_HOST}", "sender@{SERVER_HOST}")
+            msg = body.make_message(to=f"receiver@{SERVER_HOST}", sender=f"sender@{SERVER_HOST}")
 
             await self.send(msg)
             print("Message sent!")
@@ -54,7 +55,7 @@ class ReceiverAgent(Agent):
         print("ReceiverAgent started")
         b = self.RecvBehav()
         template = Template()
-        template.set_metadata("performative", "request")
+        template.set_metadata("performative", "inform")
         self.add_behaviour(b, template)
 
 
