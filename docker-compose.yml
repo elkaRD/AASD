@@ -5,7 +5,6 @@ services:
     build: ./ejabberd/
     ports:
       - "5222:5222"
-      - "5269:5269"
       - "5280:5280"
     environment:
       - "EJABBERD_ADMIN_PASSWORD=${EJABBERD_ADMIN_PASSWORD:-admin}"
