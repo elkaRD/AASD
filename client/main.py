@@ -1,4 +1,5 @@
 import os
+import time
 from datetime import datetime
 
 from spade.agent import Agent
@@ -57,25 +58,25 @@ class ReceiverAgent(Agent):
         print("ReceiverAgent started")
         b = self.RecvBehav()
         template = Template()
-        template.set_metadata("performative", "inform")
+        template.set_metadata("performative", "agree")
         self.add_behaviour(b, template)
 
 
 if __name__ == "__main__":
-    # receiveragent = ReceiverAgent(f"receiver@{SERVER_HOST}", "password")
-    # future = receiveragent.start()
-    # future.result()  # wait for receiver agent to be prepared.
-    # senderagent = SenderAgent(f"sender@{SERVER_HOST}", "password")
-    # senderagent.start()
+    receiveragent = ReceiverAgent(f"receiver@{SERVER_HOST}", "password")
+    future = receiveragent.start()
+    future.result()  # wait for receiver agent to be prepared.
+    senderagent = SenderAgent(f"sender@{SERVER_HOST}", "password")
+    senderagent.start()
 
-    # while receiveragent.is_alive():
-    #     try:
-    #         time.sleep(1)
-    #     except KeyboardInterrupt:
-    #         senderagent.stop()
-    #         receiveragent.stop()
-    #         break
-    # print("Agents finished")
+    while receiveragent.is_alive():
+        try:
+            time.sleep(1)
+        except KeyboardInterrupt:
+            senderagent.stop()
+            receiveragent.stop()
+            break
+    print("Agents finished")
     environment = Environment()
 
     drone1 = DroneController(environment, 0, 0)
