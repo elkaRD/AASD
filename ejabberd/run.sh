@@ -31,4 +31,4 @@ done
 
 ./bin/ejabberdctl register admin localhost "$password"
 
-tail -f ./logs/ejabberd.log # follow logs
+tail -f -n +1 ./logs/ejabberd.log ./logs/error.log # follow logs

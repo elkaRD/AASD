@@ -5,7 +5,6 @@ from typing import List, Optional
 from pydantic import BaseModel
 from spade.message import Message
 
-
 ONTOLOGY = "aasd_drones_boarder"
 LANGUAGE = "aasd_boarder_lang"
 
