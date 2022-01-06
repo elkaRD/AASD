@@ -1,13 +1,21 @@
 from spade.agent import Agent
-from spade.behaviour import OneShotBehaviour
+from spade.behaviour import OneShotBehaviour, CyclicBehaviour
 
 
 class ServerAgent(Agent):
-    class MockBehaviour(OneShotBehaviour):
-        async def run(self):
-            return NotImplemented
+
+    def get_behaviours(self):
+        return [
+            self.ProcessReports()
+        ]
 
     async def setup(self):
         print("ServerAgent started")
-        b = self.MockBehaviour()
-        self.add_behaviour(b)
+        for behaviour in self.get_behaviours():
+            self.add_behaviour(behaviour)
+
+    class ProcessReports(CyclicBehaviour):
+        async def run(self):
+            # TODO add periodic checking for messages from scouts and base station
+
+            return NotImplemented

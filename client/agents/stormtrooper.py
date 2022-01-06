@@ -11,6 +11,16 @@ class StormtrooperAgent(Agent):
         super().__init__(jid, password)
         self.controller = controller
 
+    def get_behaviours(self):
+        return [
+            self.MockBehaviour(self.controller)
+        ]
+
+    async def setup(self):
+        print("ScoutAgent started")
+        for behaviour in self.get_behaviours():
+            self.add_behaviour(behaviour)
+
     class MockBehaviour(OneShotBehaviour):
         def __init__(self, controller: AbstractController) -> None:
             super().__init__()
@@ -18,8 +28,3 @@ class StormtrooperAgent(Agent):
 
         async def run(self):
             return NotImplemented
-
-    async def setup(self):
-        print("StormtrooperAgent started")
-        b = self.MockBehaviour(self.controller)
-        self.add_behaviour(b)

@@ -1,7 +1,6 @@
 from spade.agent import Agent
-from spade.behaviour import OneShotBehaviour
+from spade.behaviour import CyclicBehaviour
 
-from client.domain.controllers.controller import AbstractController
 from client.domain.controllers.drone_controller import DroneController
 
 
@@ -11,15 +10,22 @@ class CoordinatorAgent(Agent):
         super().__init__(jid, password)
         self.controller = controller
 
-    class MockBehaviour(OneShotBehaviour):
-        def __init__(self, controller: AbstractController) -> None:
+    def get_behaviours(self):
+        return [
+            self.Coordinate(self.controller)
+        ]
+
+    async def setup(self):
+        print("CoordinatorAgent started")
+        for behaviour in self.get_behaviours():
+            self.add_behaviour(behaviour)
+
+    class Coordinate(CyclicBehaviour):
+        def __init__(self, controller: DroneController) -> None:
             super().__init__()
             self.controller = controller
 
         async def run(self):
-            return NotImplemented
+            # TODO add periodic checking for messages from scouts
 
-    async def setup(self):
-        print("CoordinatorAgent started")
-        b = self.MockBehaviour(self.controller)
-        self.add_behaviour(b)
+            return NotImplemented
