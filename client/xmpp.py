@@ -3,7 +3,6 @@ import time
 from typing import Optional
 
 import aioxmpp
-from aioxmpp.errors import MultiOSError
 
 
 class ServerUnavailableError(RuntimeError):
@@ -36,7 +35,7 @@ class Server:
                 loop=loop
             )
             return True
-        except MultiOSError:
+        except aioxmpp.errors.MultiOSError:
             return False
 
     def is_available(self, timeout: float = 60) -> bool:
