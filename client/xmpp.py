@@ -13,7 +13,7 @@ class ServerUnavailableError(RuntimeError):
 class Server:
     def __init__(self, domain: str) -> None:
         super().__init__()
-        self._jid = aioxmpp.JID.fromstr(domain)
+        self._jid = aioxmpp.JID(None, domain, None)
 
     @property
     def domain(self) -> str:
