@@ -24,3 +24,6 @@ class DroneController(AbstractController, AbstractDroneController):
     
     def detect_wild_animals(self, radius: float) -> Collection[Tuple[float, float]]:
         return self.env.detect_wild_animals(self.id, radius)
+
+    def get_battery_status(self) -> float:
+        return NotImplemented
