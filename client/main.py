@@ -1,7 +1,7 @@
 import time
 
-from client.agents.example import ReceiverAgent, SenderAgent
-from client.properties import SERVER_HOST
+from agents.example import ReceiverAgent, SenderAgent
+from properties import SERVER_DOMAIN
 from xmpp import Server
 from domain.controllers.animal_controller import AnimalController
 from domain.controllers.drone_controller import DroneController

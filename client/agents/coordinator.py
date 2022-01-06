@@ -1,12 +1,17 @@
 from spade.agent import Agent
 from spade.behaviour import CyclicBehaviour
 
-from client.domain.controllers.drone_controller import DroneController
+from domain.controllers.drone_controller import DroneController
 
 
 class CoordinatorAgent(Agent):
 
-    def __init__(self, jid: str, password: str, controller: DroneController) -> None:
+    def __init__(
+            self,
+            jid: str,
+            password: str,
+            controller: DroneController
+    ) -> None:
         super().__init__(jid, password)
         self.controller = controller
 

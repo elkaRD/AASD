@@ -1,13 +1,18 @@
 from spade.agent import Agent
 from spade.behaviour import OneShotBehaviour
 
-from client.domain.controllers.controller import AbstractController
-from client.domain.controllers.drone_controller import DroneController
+from domain.controllers.controller import AbstractController
+from domain.controllers.drone_controller import DroneController
 
 
 class StormtrooperAgent(Agent):
 
-    def __init__(self, jid: str, password: str, controller: DroneController) -> None:
+    def __init__(
+            self,
+            jid: str,
+            password: str,
+            controller: DroneController
+    ) -> None:
         super().__init__(jid, password)
         self.controller = controller
 

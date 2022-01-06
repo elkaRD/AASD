@@ -1,10 +1,11 @@
 from datetime import datetime
+
 from spade.agent import Agent
 from spade.behaviour import OneShotBehaviour
 from spade.template import Template
 
-from client.messages import HelpOfferBody, Coordinates
-from client.properties import SERVER_HOST
+from messages import Coordinates, HelpOfferBody
+from properties import SERVER_DOMAIN
 
 
 class SenderAgent(Agent):
@@ -16,7 +17,10 @@ class SenderAgent(Agent):
                 position=Coordinates(lat=10.0, long=4.4),
                 eta=20,
             )
-            msg = body.make_message(to=f"receiver@{SERVER_HOST}", sender=f"sender@{SERVER_HOST}")
+            msg = body.make_message(
+                to=f"receiver@{SERVER_DOMAIN}",
+                sender=f"sender@{SERVER_DOMAIN}"
+            )
 
             await self.send(msg)
             print("Message sent!")
@@ -52,4 +56,3 @@ class ReceiverAgent(Agent):
         template = Template()
         template.set_metadata("performative", "agree")
         self.add_behaviour(b, template)
-

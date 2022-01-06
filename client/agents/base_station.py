@@ -1,14 +1,19 @@
 from spade.agent import Agent
 from spade.behaviour import CyclicBehaviour, PeriodicBehaviour
 
-from client.domain.controllers.controller import AbstractController
+from domain.controllers.controller import AbstractController
 
 SENDING_REPORT_PERIOD = 60
 
 
 class BaseStationAgent(Agent):
     # TODO change AbstractController to BaseStationController
-    def __init__(self, jid: str, password: str, controller: AbstractController) -> None:
+    def __init__(
+            self,
+            jid: str,
+            password: str,
+            controller: AbstractController
+    ) -> None:
         super().__init__(jid, password)
         self.controller = controller
 
@@ -16,7 +21,10 @@ class BaseStationAgent(Agent):
         return [
             self.CheckAvailabilityOfChargers(self.controller),
             self.SendReportToServer(self.controller),
-            self.SendReportToPowerModule(SENDING_REPORT_PERIOD, self.controller)
+            self.SendReportToPowerModule(
+                SENDING_REPORT_PERIOD,
+                self.controller
+            )
         ]
 
     async def setup(self):
@@ -45,7 +53,11 @@ class BaseStationAgent(Agent):
             return NotImplemented
 
     class SendReportToPowerModule(PeriodicBehaviour):
-        def __init__(self, period: float, controller: AbstractController) -> None:
+        def __init__(
+                self,
+                period: float,
+                controller: AbstractController
+        ) -> None:
             super().__init__(period)
             self.controller = controller
 
