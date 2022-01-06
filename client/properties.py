@@ -1,3 +1,3 @@
 import os
 
-SERVER_HOST = os.getenv("SERVER_HOST", "localhost")
+SERVER_DOMAIN = os.getenv("SERVER_DOMAIN", "localhost")

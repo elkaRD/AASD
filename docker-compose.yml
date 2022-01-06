@@ -13,4 +13,4 @@ services:
     depends_on:
       - ejabberd
     environment:
-      - "SERVER_HOST=ejabberd"
+      - "SERVER_DOMAIN=ejabberd"

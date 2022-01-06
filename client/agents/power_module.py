@@ -1,7 +1,7 @@
 from spade.agent import Agent
 from spade.behaviour import CyclicBehaviour, FSMBehaviour, State
 
-from client.domain.controllers.drone_controller import DroneController
+from domain.controllers.drone_controller import DroneController
 
 CHECK_BATTERY_STATUS_STATE = "CHECK_BATTERY_STATUS_STATE"
 CHECK_AVAILABILITY_OF_CHARGERS_STATE = "CHECK_AVAILABILITY_OF_CHARGERS_STATE"
@@ -15,14 +15,19 @@ CHARGED_BATTERY_THRESHOLD = 95
 
 class PowerModuleAgent(Agent):
 
-    def __init__(self, jid: str, password: str, controller: DroneController) -> None:
+    def __init__(
+            self,
+            jid: str,
+            password: str,
+            controller: DroneController
+    ) -> None:
         super().__init__(jid, password)
         self.controller = controller
 
     def get_behaviours(self):
         return [
-             self.ReceiveReportFromStation(self.controller),
-             self.BatteryBehaviour(self.controller)
+            self.ReceiveReportFromStation(self.controller),
+            self.BatteryBehaviour(self.controller)
         ]
 
     async def setup(self):
@@ -44,17 +49,51 @@ class PowerModuleAgent(Agent):
         def __init__(self, controller: DroneController) -> None:
             super().__init__()
             self.controller = controller
-            self.add_state(name=CHECK_BATTERY_STATUS_STATE, state=self.CheckBatteryStatus(controller), initial=True)
-            self.add_state(name=CHECK_AVAILABILITY_OF_CHARGERS_STATE, state=self.CheckAvailabilityOfChargers(controller))
-            self.add_state(name=FLY_TO_STATION_STATE, state=self.FlyToStation(controller))
-            self.add_state(name=CHARGE_BATTERY_STATE, state=self.ChargeBattery(controller))
-            self.add_transition(source=CHECK_BATTERY_STATUS_STATE, dest=CHECK_BATTERY_STATUS_STATE)
-            self.add_transition(source=CHECK_BATTERY_STATUS_STATE, dest=CHECK_AVAILABILITY_OF_CHARGERS_STATE)
-            self.add_transition(source=CHECK_AVAILABILITY_OF_CHARGERS_STATE, dest=CHECK_AVAILABILITY_OF_CHARGERS_STATE)
-            self.add_transition(source=CHECK_AVAILABILITY_OF_CHARGERS_STATE, dest=FLY_TO_STATION_STATE)
-            self.add_transition(source=FLY_TO_STATION_STATE, dest=FLY_TO_STATION_STATE)
-            self.add_transition(source=FLY_TO_STATION_STATE, dest=CHARGE_BATTERY_STATE)
-            self.add_transition(source=CHARGE_BATTERY_STATE, dest=CHECK_BATTERY_STATUS_STATE)
+            self.add_state(
+                name=CHECK_BATTERY_STATUS_STATE,
+                state=self.CheckBatteryStatus(controller),
+                initial=True
+            )
+            self.add_state(
+                name=CHECK_AVAILABILITY_OF_CHARGERS_STATE,
+                state=self.CheckAvailabilityOfChargers(controller)
+            )
+            self.add_state(
+                name=FLY_TO_STATION_STATE,
+                state=self.FlyToStation(controller)
+            )
+            self.add_state(
+                name=CHARGE_BATTERY_STATE,
+                state=self.ChargeBattery(controller)
+            )
+            self.add_transition(
+                source=CHECK_BATTERY_STATUS_STATE,
+                dest=CHECK_BATTERY_STATUS_STATE
+            )
+            self.add_transition(
+                source=CHECK_BATTERY_STATUS_STATE,
+                dest=CHECK_AVAILABILITY_OF_CHARGERS_STATE
+            )
+            self.add_transition(
+                source=CHECK_AVAILABILITY_OF_CHARGERS_STATE,
+                dest=CHECK_AVAILABILITY_OF_CHARGERS_STATE
+            )
+            self.add_transition(
+                source=CHECK_AVAILABILITY_OF_CHARGERS_STATE,
+                dest=FLY_TO_STATION_STATE
+            )
+            self.add_transition(
+                source=FLY_TO_STATION_STATE,
+                dest=FLY_TO_STATION_STATE
+            )
+            self.add_transition(
+                source=FLY_TO_STATION_STATE,
+                dest=CHARGE_BATTERY_STATE
+            )
+            self.add_transition(
+                source=CHARGE_BATTERY_STATE,
+                dest=CHECK_BATTERY_STATUS_STATE
+            )
 
         async def run(self):
             # TODO add periodic checking for messages from base
