@@ -15,7 +15,7 @@ certfiles:
 
 ca_file: "/home/ejabberd/conf/cacert.pem"
 
-loglevel: debug
+loglevel: info
 
 listen:
   - port: 5222
