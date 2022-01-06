@@ -2,16 +2,20 @@ import time
 
 from client.agents.example import ReceiverAgent, SenderAgent
 from client.properties import SERVER_HOST
+from xmpp import Server
 from domain.controllers.animal_controller import AnimalController
 from domain.controllers.drone_controller import DroneController
 from domain.environment import Environment
 
 
 if __name__ == "__main__":
-    receiveragent = ReceiverAgent(f"receiver@{SERVER_HOST}", "password")
+    server = Server(SERVER_DOMAIN)
+    server.wait_until_available()
+
+    receiveragent = ReceiverAgent(f"receiver@{server.domain}", "password")
     future = receiveragent.start()
     future.result()  # wait for receiver agent to be prepared.
-    senderagent = SenderAgent(f"sender@{SERVER_HOST}", "password")
+    senderagent = SenderAgent(f"sender@{server.domain}", "password")
     senderagent.start()
 
     while receiveragent.is_alive():
