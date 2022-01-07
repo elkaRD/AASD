@@ -67,4 +67,4 @@ class Environment(AbstractEnvironment):
     
     def detect_wild_animals(self, id: int, radius: float) -> Collection[Tuple[float, float]]:
         drone_pos = self.get_drone_position(id)
-        return [animal.get_position() for animal in self.animals if sqrt(((drone_pos[0]-animal.get_position()[0])**2)+((drone_pos[1]-animal.get_position()[0])**2)) < radius]
+        return [animal.get_position() for animal in self.animals if sqrt(((drone_pos[0]-animal.get_position()[0])**2)+((drone_pos[1]-animal.get_position()[1])**2)) <= radius]
