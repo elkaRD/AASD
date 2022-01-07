@@ -6,8 +6,8 @@ def test_help_request():
     message_body = HelpRequestBody(
         time=datetime(2022, 1, 1, 12, 0, 0),
         position=Coordinates(
-            lat= 10.0,
-            long=20.0,
+            x= 10.0,
+            y=20.0,
         ),
         urgency=UrgencyEnum.LOW,
     )
@@ -31,8 +31,8 @@ def test_help_offer():
     message_body = HelpOfferBody(
         time=datetime(2022, 1, 1, 12, 0, 30),
         position=Coordinates(
-            lat=-10.0,
-            long=20.0,
+            x=-10.0,
+            y=20.0,
         ),
         eta=180.0,
     )
@@ -76,8 +76,8 @@ def test_replying():
     message_body = HelpOfferBody(
         time=datetime(2022, 1, 1, 12, 0, 30),
         position=Coordinates(
-            lat=-10.0,
-            long=20.0,
+            x=-10.0,
+            y=20.0,
         ),
         eta=180.0,
     )
@@ -94,8 +94,8 @@ def test_sector_cleared_report():
     message_body = SectorClearedReportBody(
         count=2,
         position=Coordinates(
-            lat=10,
-            long=1,
+            x=10,
+            y=1,
         ),
         seconds_spent=120,
     )
@@ -137,14 +137,14 @@ def test_sector_cleared_recieved():
 
 def test_searching_status():
     message_body = SearchingStatusBody(
-        actual_position=Coordinates(lat=2, long=3),
+        actual_position=Coordinates(x=2, y=3),
         searching_range_meters=10,
         boars_positions=[
-            Coordinates(lat=3, long=3),
-            Coordinates(lat=3, long=4),
-            Coordinates(lat=3, long=5),
+            Coordinates(x=3, y=3),
+            Coordinates(x=3, y=4),
+            Coordinates(x=3, y=5),
         ],
-        heading_towards=Coordinates(lat=3, long=4.5),
+        heading_towards=Coordinates(x=3, y=4.5),
     )
     message = message_body.make_message("recv@localhost", "sender@localhost")
 
@@ -161,10 +161,10 @@ def test_searching_status():
 
 def test_searching_status_no_boars():
     message_body = SearchingStatusBody(
-        actual_position=Coordinates(lat=2, long=3),
+        actual_position=Coordinates(x=2, y=3),
         searching_range_meters=10,
         boars_positions=[],
-        heading_towards=Coordinates(lat=3, long=4.5),
+        heading_towards=Coordinates(x=3, y=4.5),
     )
     message = message_body.make_message("recv@localhost", "sender@localhost")
 
@@ -191,7 +191,7 @@ def test_searching_directives():
 def test_searching_directives_with_new_coords():
     message_body = SearchingDirectivesBody(
         keep_schedule=False,
-        change_direction=Coordinates(lat=20, long=10),
+        change_direction=Coordinates(x=20, y=10),
     )
     message = message_body.make_message("recv@localhost", "sender@localhost")
     assert message.metadata == {
@@ -202,7 +202,7 @@ def test_searching_directives_with_new_coords():
     }
     after_deserialization = SearchingDirectivesBody.parse_raw(message.body)
     assert after_deserialization.keep_schedule is False
-    assert after_deserialization.change_direction == Coordinates(lat=20, long=10)
+    assert after_deserialization.change_direction == Coordinates(x=20, y=10)
 
 
 def test_dock_occupation_report():

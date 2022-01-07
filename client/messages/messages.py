@@ -25,8 +25,8 @@ class MessageBase(BaseModel):
         msg.set_metadata("body_type", self.__class__.__name__)
 
 class Coordinates(BaseModel):
-    lat: float
-    long: float
+    x: float
+    y: float
 
 
 class UrgencyEnum(str, Enum):

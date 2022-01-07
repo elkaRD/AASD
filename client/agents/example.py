@@ -14,7 +14,7 @@ class SenderAgent(Agent):
             print("InformBehav running")
             body = HelpOfferBody(
                 time=datetime.now(),
-                position=Coordinates(lat=10.0, long=4.4),
+                position=Coordinates(x=10.0, y=4.4),
                 eta=20,
             )
             msg = body.make_message(
