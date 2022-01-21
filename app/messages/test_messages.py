@@ -2,11 +2,12 @@ from datetime import datetime
 
 from messages import *
 
+
 def test_help_request():
     message_body = HelpRequestBody(
         time=datetime(2022, 1, 1, 12, 0, 0),
         position=Coordinates(
-            x= 10.0,
+            x=10.0,
             y=20.0,
         ),
         urgency=UrgencyEnum.LOW,
@@ -18,11 +19,11 @@ def test_help_request():
     assert str(message.sender) == "sender@localhost"
     assert message.metadata == {
         "performative": "request",
-        'language': 'aasd_boarder_lang',
-        'ontology': 'aasd_drones_boarder',
-        "body_type": "HelpRequestBody",
+        'language'    : 'JSON',
+        'ontology'    : 'aasd_drones_boarder',
+        "body_type"   : "HelpRequestBody",
     }
-    
+
     after_deserialization = HelpRequestBody.parse_raw(message.body)
     assert message_body == after_deserialization
 
@@ -43,11 +44,11 @@ def test_help_offer():
     assert str(message.sender) == "sender1@localhost"
     assert message.metadata == {
         "performative": "agree",
-        'language': 'aasd_boarder_lang',
-        'ontology': 'aasd_drones_boarder',
-        "body_type": "HelpOfferBody",
+        'language'    : 'JSON',
+        'ontology'    : 'aasd_drones_boarder',
+        "body_type"   : "HelpOfferBody",
     }
-    
+
     after_deserialization = HelpOfferBody.parse_raw(message.body)
     assert message_body == after_deserialization
 
@@ -63,11 +64,11 @@ def test_help_offer_response():
     assert str(message.sender) == "sender2@localhost"
     assert message.metadata == {
         "performative": "inform",
-        'language': 'aasd_boarder_lang',
-        'ontology': 'aasd_drones_boarder',
-        "body_type": "HelpResponseBody",
+        'language'    : 'JSON',
+        'ontology'    : 'aasd_drones_boarder',
+        "body_type"   : "HelpResponseBody",
     }
-    
+
     after_deserialization = HelpResponseBody.parse_raw(message.body)
     assert message_body == after_deserialization
 
@@ -106,11 +107,11 @@ def test_sector_cleared_report():
     assert str(message.sender) == "sender@localhost"
     assert message.metadata == {
         "performative": "inform",
-        'language': 'aasd_boarder_lang',
-        'ontology': 'aasd_drones_boarder',
-        "body_type": "SectorClearedReportBody",
+        'language'    : 'JSON',
+        'ontology'    : 'aasd_drones_boarder',
+        "body_type"   : "SectorClearedReportBody",
     }
-    
+
     after_deserialization = SectorClearedReportBody.parse_raw(message.body)
     assert message_body == after_deserialization
 
@@ -126,11 +127,11 @@ def test_sector_cleared_recieved():
     assert str(message.sender) == "sender@localhost"
     assert message.metadata == {
         "performative": "agree",
-        'language': 'aasd_boarder_lang',
-        'ontology': 'aasd_drones_boarder',
-        "body_type": "SectorClearedRecievedBody",
+        'language'    : 'JSON',
+        'ontology'    : 'aasd_drones_boarder',
+        "body_type"   : "SectorClearedRecievedBody",
     }
-    
+
     after_deserialization = SectorClearedRecievedBody.parse_raw(message.body)
     assert message_body == after_deserialization
 
@@ -150,9 +151,9 @@ def test_searching_status():
 
     assert message.metadata == {
         "performative": "inform",
-        'language': 'aasd_boarder_lang',
-        'ontology': 'aasd_drones_boarder',
-        "body_type": "SearchingStatusBody",
+        'language'    : 'JSON',
+        'ontology'    : 'aasd_drones_boarder',
+        "body_type"   : "SearchingStatusBody",
     }
     after_deserialization = SearchingStatusBody.parse_raw(message.body)
     assert message_body == after_deserialization
@@ -180,9 +181,9 @@ def test_searching_directives():
     message = message_body.make_message("recv@localhost", "sender@localhost")
     assert message.metadata == {
         "performative": "inform",
-        'language': 'aasd_boarder_lang',
-        'ontology': 'aasd_drones_boarder',
-        "body_type": "SearchingDirectivesBody",
+        'language'    : 'JSON',
+        'ontology'    : 'aasd_drones_boarder',
+        "body_type"   : "SearchingDirectivesBody",
     }
     after_deserialization = SearchingDirectivesBody.parse_raw(message.body)
     assert after_deserialization.keep_schedule is True
@@ -196,9 +197,9 @@ def test_searching_directives_with_new_coords():
     message = message_body.make_message("recv@localhost", "sender@localhost")
     assert message.metadata == {
         "performative": "inform",
-        'language': 'aasd_boarder_lang',
-        'ontology': 'aasd_drones_boarder',
-        "body_type": "SearchingDirectivesBody",
+        'language'    : 'JSON',
+        'ontology'    : 'aasd_drones_boarder',
+        "body_type"   : "SearchingDirectivesBody",
     }
     after_deserialization = SearchingDirectivesBody.parse_raw(message.body)
     assert after_deserialization.keep_schedule is False
@@ -221,9 +222,9 @@ def test_dock_occupation_report():
 
     assert message.metadata == {
         "performative": "inform",
-        'language': 'aasd_boarder_lang',
-        'ontology': 'aasd_drones_boarder',
-        "body_type": "DockOccupationReportBody",
+        'language'    : 'JSON',
+        'ontology'    : 'aasd_drones_boarder',
+        "body_type"   : "DockOccupationReportBody",
     }
     after_deserialization = DockOccupationReportBody.parse_raw(message.body)
     assert message_body == after_deserialization
@@ -238,9 +239,9 @@ def test_charging_request():
 
     assert message.metadata == {
         "performative": "request",
-        'language': 'aasd_boarder_lang',
-        'ontology': 'aasd_drones_boarder',
-        "body_type": "ChargingRequestBody",
+        'language'    : 'JSON',
+        'ontology'    : 'aasd_drones_boarder',
+        "body_type"   : "ChargingRequestBody",
     }
     after_deserialization = ChargingRequestBody.parse_raw(message.body)
     assert message_body == after_deserialization
@@ -255,9 +256,9 @@ def test_charging_response():
 
     assert message.metadata == {
         "performative": "agree",
-        'language': 'aasd_boarder_lang',
-        'ontology': 'aasd_drones_boarder',
-        "body_type": "ChargingResponseBody",
+        'language'    : 'JSON',
+        'ontology'    : 'aasd_drones_boarder',
+        "body_type"   : "ChargingResponseBody",
     }
     after_deserialization = ChargingResponseBody.parse_raw(message.body)
     assert message_body == after_deserialization
