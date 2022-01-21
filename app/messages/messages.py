@@ -1,43 +1,16 @@
+import json
 from abc import abstractmethod
 from datetime import datetime
 from enum import Enum
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
-from pydantic import BaseModel
-from spade.message import Message
+from aioxmpp import JID
+from spade.message import Message as SpadeMessage
+
+from utils import BaseModel, Typable
 
 ONTOLOGY = "aasd_drones_boarder"
 LANGUAGE = "JSON"
-
-
-class MessageBase(BaseModel):
-    def make_message(self, to: str, sender: str) -> Message:
-        return Message(
-            to=to,
-            sender=sender,
-            body=self.json(),
-            metadata=self.metadata
-        )
-
-    def make_response(self, message: Message) -> Message:
-        return self.make_message(
-            to=str(message.sender),
-            sender=str(message.to)
-        )
-
-    @property
-    @abstractmethod
-    def performative(self) -> str:
-        pass
-
-    @property
-    def metadata(self) -> Dict[str, str]:
-        return {
-            "ontology"    : ONTOLOGY,
-            "language"    : LANGUAGE,
-            "performative": self.performative,
-            "body_type"   : self.__class__.__name__
-        }
 
 
 class Coordinates(BaseModel):
@@ -61,10 +34,55 @@ class Dock(BaseModel):
     occupied_by: Optional[Drone]
 
 
+class MessageBody(BaseModel, Typable):
+    @classmethod
+    def parse(cls, message: SpadeMessage) -> 'MessageBody':
+        subclass = cls.for_type(message.metadata["type"])
+        params = json.loads(message.body)
+        return subclass.__call__(**params)
+
+    def make_message(
+            self,
+            to: Union[str, JID],
+            sender: Union[str, JID]
+    ) -> SpadeMessage:
+        return SpadeMessage(
+            to=str(to),
+            sender=str(sender),
+            body=self.json(),
+            metadata=self.metadata
+        )
+
+    def make_response(self, message: SpadeMessage) -> SpadeMessage:
+        return self.make_message(
+            to=str(message.sender),
+            sender=str(message.to)
+        )
+
+    @property
+    @abstractmethod
+    def performative(self) -> str:
+        pass
+
+    @classmethod
+    @property
+    def type(cls) -> str:
+        return cls.__name__
+
+    @property
+    def metadata(self) -> Dict[str, str]:
+        return {
+            "ontology"    : ONTOLOGY,
+            "language"    : LANGUAGE,
+            "performative": self.performative,
+            "type"        : self.type
+        }
+
+
 # Pierwszy diagram kolaboracji
 
 
-class HelpRequestBody(MessageBase):
+class HelpRequestBody(MessageBody):
     """Prośba o pomoc"""
 
     time: datetime
@@ -76,7 +94,7 @@ class HelpRequestBody(MessageBase):
         return "request"
 
 
-class HelpOfferBody(MessageBase):
+class HelpOfferBody(MessageBody):
     """Propozycja pomocy"""
 
     time: datetime
@@ -88,7 +106,7 @@ class HelpOfferBody(MessageBase):
         return "agree"
 
 
-class HelpResponseBody(MessageBase):
+class HelpResponseBody(MessageBody):
     """Zaakceptowanie lub odrzucenie pomocy"""
 
     help_accepted: bool
@@ -101,7 +119,7 @@ class HelpResponseBody(MessageBase):
 # Drugi diagram kolaboracji
 
 
-class SectorClearedReportBody(MessageBase):
+class SectorClearedReportBody(MessageBody):
     """Powiadomienie o przegonieniu zwierząt"""
 
     count: int
@@ -113,7 +131,7 @@ class SectorClearedReportBody(MessageBase):
         return "inform"
 
 
-class SectorClearedRecievedBody(MessageBase):
+class SectorClearedRecievedBody(MessageBody):
     """Powiadomienie o odebraniu raportu"""
 
     accepted: bool
@@ -126,7 +144,7 @@ class SectorClearedRecievedBody(MessageBase):
 # Trzeci diagram kolaboracji
 
 
-class SearchingStatusBody(MessageBase):
+class SearchingStatusBody(MessageBody):
     """Powiadomienie o stanie przeszukiwania"""
 
     actual_position: Coordinates
@@ -139,7 +157,7 @@ class SearchingStatusBody(MessageBase):
         return "inform"
 
 
-class SearchingDirectivesBody(MessageBase):
+class SearchingDirectivesBody(MessageBody):
     """Powiadomienie o odebraniu raportu"""
 
     keep_schedule: bool
@@ -153,7 +171,7 @@ class SearchingDirectivesBody(MessageBase):
 # Czwarty i piąty diagram kolaboracji
 
 
-class DockOccupationReportBody(MessageBase):
+class DockOccupationReportBody(MessageBody):
     """Powiadomienie o zmianie zajętości stacji dokującej"""
 
     total_docks: int
@@ -166,7 +184,7 @@ class DockOccupationReportBody(MessageBase):
 
 # Szósty diagram kolaboracji
 
-class ChargingRequestBody(MessageBase):
+class ChargingRequestBody(MessageBody):
     """Powiadomienie o chęci ładowania"""
 
     remaining_time_on_battery: float
@@ -177,7 +195,7 @@ class ChargingRequestBody(MessageBase):
         return "request"
 
 
-class ChargingResponseBody(MessageBase):
+class ChargingResponseBody(MessageBody):
     """Powiadomienie o dostępnym miejscu do ładowania"""
 
     charging_available: bool

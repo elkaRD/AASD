@@ -28,7 +28,7 @@ class SenderAgent(Agent):
             )
 
             await self.send(msg)
-            self.log("Message sent!")
+            self.log("MessageBody sent!")
 
             # stop agent from behaviour
             await self.agent.stop()
@@ -50,7 +50,7 @@ class ReceiverAgent(Agent):
                 timeout=10
             )  # wait for a message for 10 seconds
             if msg:
-                self.log("Message received with content: {}".format(msg.body))
+                self.log("MessageBody received with content: {}".format(msg.body))
             else:
                 self.log("Did not received any message after 10 seconds")
 

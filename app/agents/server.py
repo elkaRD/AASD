@@ -1,6 +1,7 @@
 from typing import Iterator
 
 from agents.agent import Agent, Behaviour, CyclicBehaviour
+from messages.messages import MessageBody
 
 
 class ServerAgent(Agent):
@@ -11,5 +12,9 @@ class ServerAgent(Agent):
 
     class ProcessReports(CyclicBehaviour):
         async def run(self) -> None:
-            # TODO add periodic checking for messages from scouts and base station
-            return NotImplemented
+            message = await self.receive(timeout=60)
+            if message:
+                content = MessageBody.parse(message)
+                self.log(
+                    f"New report from {message.sender}:\n{content.pretty_print()}"
+                )

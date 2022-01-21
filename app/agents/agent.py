@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Iterator, Optional
+from typing import Iterator, Optional, Union
 
 from aioxmpp import JID
 from spade import agent as sa, behaviour as sb
@@ -124,11 +124,11 @@ Behaviour = sb.CyclicBehaviour
 class Agent(sa.Agent, WithJIDLogging, ABC):
     def __init__(
             self,
-            jid: str,
+            jid: Union[str, JID],
             password: str,
             logger: Logger = NullLogger()
     ):
-        super().__init__(jid, password)
+        super().__init__(str(jid), password)
         self._logger = logger
 
     def get_jid(self) -> JID:

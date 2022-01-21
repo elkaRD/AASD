@@ -1,4 +1,4 @@
-from typing import Iterator
+from typing import Iterator, Union
 
 from aioxmpp import JID
 
@@ -19,7 +19,7 @@ CHARGED_BATTERY_THRESHOLD = 95
 class PowerModuleAgent(Agent):
     def __init__(
             self,
-            jid: str,
+            jid: Union[str, JID],
             password: str,
             controller: DroneController,
             logger: Logger = NullLogger()
