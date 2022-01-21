@@ -8,8 +8,8 @@ services:
       - "5280:5280"
     environment:
       - "EJABBERD_ADMIN_PASSWORD=${EJABBERD_ADMIN_PASSWORD:-admin}"
-  client:
-    build: ./client/
+  app:
+    build: ./app/
     depends_on:
       - ejabberd
     environment:
