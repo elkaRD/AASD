@@ -1,29 +1,39 @@
 import time
 
 from agents.example import ReceiverAgent, SenderAgent
-from properties import SERVER_DOMAIN
-from xmpp import Server
 from domain.controllers.animal_controller import AnimalController
 from domain.controllers.drone_controller import DroneController
 from domain.environment import Environment
-
+from loggers import ConsoleLogger
+from properties import SERVER_DOMAIN
+from xmpp import Server
 
 if __name__ == "__main__":
     server = Server(SERVER_DOMAIN)
     server.wait_until_available()
 
-    receiveragent = ReceiverAgent(f"receiver@{server.domain}", "password")
-    future = receiveragent.start()
-    future.result()  # wait for receiver agent to be prepared.
-    senderagent = SenderAgent(f"sender@{server.domain}", "password")
-    senderagent.start()
+    logger = ConsoleLogger()
 
-    while receiveragent.is_alive():
+    receiver = ReceiverAgent(
+        f"receiver@{server.domain}",
+        "password",
+        logger=logger
+    )
+    future = receiver.start()
+    future.result()  # wait for receiver agent to be prepared.
+    sender = SenderAgent(
+        f"sender@{server.domain}",
+        "password",
+        logger=logger
+    )
+    sender.start()
+
+    while receiver.is_alive():
         try:
             time.sleep(1)
         except KeyboardInterrupt:
-            senderagent.stop()
-            receiveragent.stop()
+            sender.stop()
+            receiver.stop()
             break
     print("Agents finished")
     environment = Environment()

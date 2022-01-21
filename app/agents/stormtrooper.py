@@ -1,12 +1,14 @@
-from spade.agent import Agent
-from spade.behaviour import OneShotBehaviour
+from typing import Iterator
 
+from aioxmpp import JID
+
+from agents.agent import Agent, Behaviour, OneShotBehaviour
 from domain.controllers.controller import AbstractController
 from domain.controllers.drone_controller import DroneController
+from loggers import Logger
 
 
 class StormtrooperAgent(Agent):
-
     def __init__(
             self,
             jid: str,
@@ -16,20 +18,24 @@ class StormtrooperAgent(Agent):
         super().__init__(jid, password)
         self.controller = controller
 
-    def get_behaviours(self):
+    def get_behaviours(self) -> Iterator[Behaviour]:
         return [
-            self.MockBehaviour(self.controller)
+            self.MockBehaviour(
+                self.get_jid(),
+                self.controller,
+                self.get_logger()
+            )
         ]
 
-    async def setup(self):
-        print("ScoutAgent started")
-        for behaviour in self.get_behaviours():
-            self.add_behaviour(behaviour)
-
     class MockBehaviour(OneShotBehaviour):
-        def __init__(self, controller: AbstractController) -> None:
-            super().__init__()
+        def __init__(
+                self,
+                jid: JID,
+                controller: AbstractController,
+                logger: Logger
+        ) -> None:
+            super().__init__(jid, logger)
             self.controller = controller
 
-        async def run(self):
+        async def run(self) -> None:
             return NotImplemented

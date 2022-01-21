@@ -1,32 +1,27 @@
-from spade.agent import Agent
-from spade.behaviour import CyclicBehaviour
+from typing import Iterator
 
+from agents.agent import Agent, Behaviour, CyclicBehaviour
 from domain.controllers.drone_controller import DroneController
+from loggers import Logger, NullLogger
 
 
 class ScoutAgent(Agent):
-
     def __init__(
             self,
             jid: str,
             password: str,
-            controller: DroneController
+            controller: DroneController,
+            logger: Logger = NullLogger()
     ) -> None:
-        super().__init__(jid, password)
+        super().__init__(jid, password, logger)
         self.controller = controller
 
-    def get_behaviours(self):
-        return [
-            self.CheckReportsFromStormtroopers()
-        ]
-
-    async def setup(self):
-        print("ScoutAgent started")
-        for behaviour in self.get_behaviours():
-            self.add_behaviour(behaviour)
+    def get_behaviours(self) -> Iterator[Behaviour]:
+        return [self.CheckReportsFromStormtroopers(
+            self.get_jid(), self.get_logger()
+        )]
 
     class CheckReportsFromStormtroopers(CyclicBehaviour):
-        async def run(self):
+        async def run(self) -> None:
             # TODO check if there are reports from stormtroopers
-
             return NotImplemented
