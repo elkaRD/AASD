@@ -1,17 +1,22 @@
 from datetime import datetime
+from typing import Iterator
 
-from spade.agent import Agent
-from spade.behaviour import OneShotBehaviour
 from spade.template import Template
 
+from agents.agent import Agent, Behaviour, OneShotBehaviour
 from messages import Coordinates, HelpOfferBody
 from properties import SERVER_DOMAIN
 
 
 class SenderAgent(Agent):
-    class InformBehav(OneShotBehaviour):
+    def get_behaviours(self) -> Iterator[Behaviour]:
+        return [
+            self.InformBehaviour(self.get_jid(), self.get_logger())
+        ]
+
+    class InformBehaviour(OneShotBehaviour):
         async def run(self):
-            print("InformBehav running")
+            self.log("Running")
             body = HelpOfferBody(
                 time=datetime.now(),
                 position=Coordinates(x=10.0, y=4.4),
@@ -23,36 +28,31 @@ class SenderAgent(Agent):
             )
 
             await self.send(msg)
-            print("Message sent!")
+            self.log("Message sent!")
 
             # stop agent from behaviour
             await self.agent.stop()
 
-    async def setup(self):
-        print("SenderAgent started")
-        b = self.InformBehav()
-        self.add_behaviour(b)
-
 
 class ReceiverAgent(Agent):
-    class RecvBehav(OneShotBehaviour):
+    def get_behaviours(self) -> Iterator[Behaviour]:
+        b = self.RecvBehaviour(self.get_jid(), self.get_logger())
+        template = Template()
+        template.set_metadata("performative", "agree")
+        self.add_behaviour(b, template)
+        return [b]
+
+    class RecvBehaviour(OneShotBehaviour):
         async def run(self):
-            print("RecvBehav running")
+            self.log("Running")
 
             msg = await self.receive(
                 timeout=10
             )  # wait for a message for 10 seconds
             if msg:
-                print("Message received with content: {}".format(msg.body))
+                self.log("Message received with content: {}".format(msg.body))
             else:
-                print("Did not received any message after 10 seconds")
+                self.log("Did not received any message after 10 seconds")
 
             # stop agent from behaviour
             await self.agent.stop()
-
-    async def setup(self):
-        print("ReceiverAgent started")
-        b = self.RecvBehav()
-        template = Template()
-        template.set_metadata("performative", "agree")
-        self.add_behaviour(b, template)

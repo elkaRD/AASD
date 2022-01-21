@@ -1,21 +1,15 @@
-from spade.agent import Agent
-from spade.behaviour import CyclicBehaviour
+from typing import Iterator
+
+from agents.agent import Agent, Behaviour, CyclicBehaviour
 
 
 class ServerAgent(Agent):
-
-    def get_behaviours(self):
+    def get_behaviours(self) -> Iterator[Behaviour]:
         return [
-            self.ProcessReports()
+            self.ProcessReports(self.get_jid(), self.get_logger())
         ]
 
-    async def setup(self):
-        print("ServerAgent started")
-        for behaviour in self.get_behaviours():
-            self.add_behaviour(behaviour)
-
     class ProcessReports(CyclicBehaviour):
-        async def run(self):
+        async def run(self) -> None:
             # TODO add periodic checking for messages from scouts and base station
-
             return NotImplemented

@@ -1,36 +1,42 @@
-from spade.agent import Agent
-from spade.behaviour import CyclicBehaviour
+from typing import Iterator
 
+from aioxmpp import JID
+
+from agents.agent import Agent, Behaviour, CyclicBehaviour
 from domain.controllers.drone_controller import DroneController
+from loggers import Logger, NullLogger
 
 
 class CoordinatorAgent(Agent):
-
     def __init__(
             self,
             jid: str,
             password: str,
-            controller: DroneController
+            controller: DroneController,
+            logger: Logger = NullLogger()
     ) -> None:
-        super().__init__(jid, password)
+        super().__init__(jid, password, logger)
         self.controller = controller
 
-    def get_behaviours(self):
+    def get_behaviours(self) -> Iterator[Behaviour]:
         return [
-            self.Coordinate(self.controller)
+            self.Coordinate(
+                self.get_jid(),
+                self.controller,
+                self.get_logger()
+            )
         ]
 
-    async def setup(self):
-        print("CoordinatorAgent started")
-        for behaviour in self.get_behaviours():
-            self.add_behaviour(behaviour)
-
     class Coordinate(CyclicBehaviour):
-        def __init__(self, controller: DroneController) -> None:
-            super().__init__()
+        def __init__(
+                self,
+                jid: JID,
+                controller: DroneController,
+                logger: Logger
+        ) -> None:
+            super().__init__(jid, logger)
             self.controller = controller
 
-        async def run(self):
+        async def run(self) -> None:
             # TODO add periodic checking for messages from scouts
-
             return NotImplemented
