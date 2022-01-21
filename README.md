@@ -20,7 +20,7 @@ python -m pip install -r requirements.txt
 
 ## Running
 
-To run both `ejabberd` and `client`:
+To run both `ejabberd` and `app`:
 
 ```shell
 docker-compose up --build
