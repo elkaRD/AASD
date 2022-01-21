@@ -1,4 +1,4 @@
-from typing import Iterator
+from typing import Iterator, Union
 
 from aioxmpp import JID
 
@@ -11,7 +11,7 @@ from loggers import Logger
 class StormtrooperAgent(Agent):
     def __init__(
             self,
-            jid: str,
+            jid: Union[str, JID],
             password: str,
             controller: DroneController
     ) -> None:

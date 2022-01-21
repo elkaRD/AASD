@@ -1,4 +1,4 @@
-from typing import Iterator
+from typing import Iterator, Union
 
 from aioxmpp import JID
 
@@ -10,7 +10,7 @@ from loggers import Logger, NullLogger
 class CoordinatorAgent(Agent):
     def __init__(
             self,
-            jid: str,
+            jid: Union[str, JID],
             password: str,
             controller: DroneController,
             logger: Logger = NullLogger()
