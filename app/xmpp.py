@@ -1,15 +1,17 @@
 import asyncio
 import time
+import uuid
 from typing import Optional
 
 import aioxmpp
+from aioxmpp import JID
 
 
 class ServerUnavailableError(RuntimeError):
     pass
 
 
-class Server:
+class XMPPServer:
     def __init__(self, domain: str) -> None:
         super().__init__()
         self._jid = aioxmpp.JID(None, domain, None)
@@ -58,3 +60,11 @@ class Server:
         raise ServerUnavailableError(
             f"Server not available after {tries} tries"
         )
+
+
+class JIDGenerator:
+    def __init__(self, domain: str) -> None:
+        self.domain = domain
+
+    def generate(self) -> JID:
+        return JID.fromstr(f"{uuid.uuid4().hex}@{self.domain}")

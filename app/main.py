@@ -6,11 +6,10 @@ from domain.controllers.drone_controller import DroneController
 from domain.environment import Environment
 from loggers import ConsoleLogger
 from properties import SERVER_DOMAIN
-from utils import JIDGenerator
-from xmpp import Server
+from xmpp import JIDGenerator, XMPPServer
 
 if __name__ == "__main__":
-    xmpp_server = Server(SERVER_DOMAIN)
+    xmpp_server = XMPPServer(SERVER_DOMAIN)
     xmpp_server.wait_until_available()
 
     jid_generator = JIDGenerator(xmpp_server.domain)
