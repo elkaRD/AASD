@@ -1,5 +1,4 @@
 from abc import ABC
-from abc import ABC
 from typing import Set, TypeVar
 
 from pydantic import BaseModel as PydanticModel
@@ -13,7 +12,7 @@ class Typable(ABC):
         subclasses = set(cls.__subclasses__())
         subsubclasses = set()
         for subclass in subclasses:
-            subsubclasses |= set(subclass.__subclasses__())
+            subsubclasses |= subclass.all_subclasses()
         return subclasses | subsubclasses
 
     @classmethod
