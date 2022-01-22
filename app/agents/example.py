@@ -10,9 +10,7 @@ from properties import SERVER_DOMAIN
 
 class SenderAgent(Agent):
     def get_behaviours(self) -> Iterator[Behaviour]:
-        return [
-            self.InformBehaviour(self.get_jid(), self.get_logger())
-        ]
+        return [self.InformBehaviour(self.get_jid(), self.get_logger())]
 
     class InformBehaviour(OneShotBehaviour):
         async def run(self):
@@ -23,8 +21,7 @@ class SenderAgent(Agent):
                 eta=20,
             )
             msg = body.make_message(
-                to=f"receiver@{SERVER_DOMAIN}",
-                sender=f"sender@{SERVER_DOMAIN}"
+                to=f"receiver@{SERVER_DOMAIN}", sender=f"sender@{SERVER_DOMAIN}"
             )
 
             await self.send(msg)
@@ -46,9 +43,7 @@ class ReceiverAgent(Agent):
         async def run(self):
             self.log("Running")
 
-            msg = await self.receive(
-                timeout=10
-            )  # wait for a message for 10 seconds
+            msg = await self.receive(timeout=10)  # wait for a message for 10 seconds
             if msg:
                 self.log("MessageBody received with content: {}".format(msg.body))
             else:

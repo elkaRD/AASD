@@ -15,10 +15,7 @@ class DroneController(AbstractMovableController):
     def move(self, x: float, y: float) -> None:
         self.env.move_drone(self.id, x, y)
 
-    def detect_wild_animals(
-            self,
-            radius: float
-    ) -> Collection[Tuple[float, float]]:
+    def detect_wild_animals(self, radius: float) -> Collection[Tuple[float, float]]:
         return self.env.detect_wild_animals(self.id, radius)
 
     def get_battery_status(self) -> float:

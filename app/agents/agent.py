@@ -57,11 +57,11 @@ class OneShotBehaviour(sb.OneShotBehaviour, WithJIDLogging, ABC):
 
 class PeriodicBehaviour(sb.PeriodicBehaviour, WithJIDLogging, ABC):
     def __init__(
-            self,
-            jid: JID,
-            period: float,
-            logger: Logger = NullLogger(),
-            start_at: Optional[datetime] = None
+        self,
+        jid: JID,
+        period: float,
+        logger: Logger = NullLogger(),
+        start_at: Optional[datetime] = None,
     ):
         super().__init__(period, start_at)
         self._jid = jid
@@ -75,12 +75,7 @@ class PeriodicBehaviour(sb.PeriodicBehaviour, WithJIDLogging, ABC):
 
 
 class TimeoutBehaviour(sb.TimeoutBehaviour, WithJIDLogging, ABC):
-    def __init__(
-            self,
-            jid: JID,
-            start_at: datetime,
-            logger: Logger = NullLogger()
-    ):
+    def __init__(self, jid: JID, start_at: datetime, logger: Logger = NullLogger()):
         super().__init__(start_at)
         self._jid = jid
         self._logger = logger
@@ -123,10 +118,7 @@ Behaviour = sb.CyclicBehaviour
 
 class Agent(sa.Agent, WithJIDLogging, ABC):
     def __init__(
-            self,
-            jid: Union[str, JID],
-            password: str,
-            logger: Logger = NullLogger()
+        self, jid: Union[str, JID], password: str, logger: Logger = NullLogger()
     ):
         super().__init__(str(jid), password)
         self._logger = logger

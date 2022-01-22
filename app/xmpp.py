@@ -25,16 +25,14 @@ class XMPPServer:
         return self._jid
 
     async def async_is_available(
-            self,
-            loop: Optional[asyncio.BaseEventLoop] = None,
-            timeout: float = 60
+        self, loop: Optional[asyncio.BaseEventLoop] = None, timeout: float = 60
     ) -> bool:
         try:
             await aioxmpp.node.connect_xmlstream(
                 self.jid,
                 aioxmpp.make_security_layer(None, no_verify=True),
                 negotiation_timeout=timeout,
-                loop=loop
+                loop=loop,
             )
             return True
         except aioxmpp.errors.MultiOSError:
@@ -44,11 +42,7 @@ class XMPPServer:
         return asyncio.run(self.async_is_available(timeout=timeout))
 
     def wait_until_available(
-            self,
-            tries: int = 5,
-            delay: float = 1,
-            backoff: float = 2,
-            timeout: float = 60
+        self, tries: int = 5, delay: float = 1, backoff: float = 2, timeout: float = 60
     ) -> None:
         t_tries, t_delay = tries, delay
         while t_tries > 0:
@@ -57,9 +51,7 @@ class XMPPServer:
             time.sleep(t_delay)
             t_tries -= 1
             t_delay *= backoff
-        raise ServerUnavailableError(
-            f"Server not available after {tries} tries"
-        )
+        raise ServerUnavailableError(f"Server not available after {tries} tries")
 
 
 class JIDGenerator:
