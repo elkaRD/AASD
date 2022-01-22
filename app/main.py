@@ -6,11 +6,14 @@ from domain.controllers.drone_controller import DroneController
 from domain.environment import Environment
 from loggers import ConsoleLogger
 from properties import SERVER_DOMAIN
+from utils import JIDGenerator
 from xmpp import Server
 
 if __name__ == "__main__":
     xmpp_server = Server(SERVER_DOMAIN)
     xmpp_server.wait_until_available()
+
+    jid_generator = JIDGenerator(xmpp_server.domain)
 
     environment = Environment()
     controller = DroneController(environment, 0, 0)
@@ -18,16 +21,10 @@ if __name__ == "__main__":
     logger = ConsoleLogger()
 
     server = ServerAgent(
-        f"server@{xmpp_server.domain}",
-        "password",
-        logger
+        jid_generator.generate(), "password", logger
     )
     station = BaseStationAgent(
-        f"station@{xmpp_server.domain}",
-        "password",
-        server.jid,
-        controller,
-        logger
+        jid_generator.generate(), "password", server.jid, controller, logger
     )
 
     server.start().result()
