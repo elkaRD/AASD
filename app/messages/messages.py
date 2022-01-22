@@ -36,28 +36,20 @@ class Dock(BaseModel):
 
 class MessageBody(BaseModel, Typable):
     @classmethod
-    def parse(cls, message: SpadeMessage) -> 'MessageBody':
+    def parse(cls, message: SpadeMessage) -> "MessageBody":
         subclass = cls.for_type(message.metadata["type"])
         params = json.loads(message.body)
         return subclass.__call__(**params)
 
     def make_message(
-            self,
-            to: Union[str, JID],
-            sender: Union[str, JID]
+        self, to: Union[str, JID], sender: Union[str, JID]
     ) -> SpadeMessage:
         return SpadeMessage(
-            to=str(to),
-            sender=str(sender),
-            body=self.json(),
-            metadata=self.metadata
+            to=str(to), sender=str(sender), body=self.json(), metadata=self.metadata
         )
 
     def make_response(self, message: SpadeMessage) -> SpadeMessage:
-        return self.make_message(
-            to=str(message.sender),
-            sender=str(message.to)
-        )
+        return self.make_message(to=str(message.sender), sender=str(message.to))
 
     @property
     @abstractmethod
@@ -72,10 +64,10 @@ class MessageBody(BaseModel, Typable):
     @property
     def metadata(self) -> Dict[str, str]:
         return {
-            "ontology"    : ONTOLOGY,
-            "language"    : LANGUAGE,
+            "ontology": ONTOLOGY,
+            "language": LANGUAGE,
             "performative": self.performative,
-            "type"        : self.type
+            "type": self.type,
         }
 
 
@@ -183,6 +175,7 @@ class DockOccupationReportBody(MessageBody):
 
 
 # Szósty diagram kolaboracji
+
 
 class ChargingRequestBody(MessageBody):
     """Powiadomienie o chęci ładowania"""

@@ -10,29 +10,17 @@ from loggers import Logger
 
 class StormtrooperAgent(Agent):
     def __init__(
-            self,
-            jid: Union[str, JID],
-            password: str,
-            controller: DroneController
+        self, jid: Union[str, JID], password: str, controller: DroneController
     ) -> None:
         super().__init__(jid, password)
         self.controller = controller
 
     def get_behaviours(self) -> Iterator[Behaviour]:
-        return [
-            self.MockBehaviour(
-                self.get_jid(),
-                self.controller,
-                self.get_logger()
-            )
-        ]
+        return [self.MockBehaviour(self.get_jid(), self.controller, self.get_logger())]
 
     class MockBehaviour(OneShotBehaviour):
         def __init__(
-                self,
-                jid: JID,
-                controller: AbstractMovableController,
-                logger: Logger
+            self, jid: JID, controller: AbstractMovableController, logger: Logger
         ) -> None:
             super().__init__(jid, logger)
             self.controller = controller
