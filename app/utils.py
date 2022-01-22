@@ -1,6 +1,8 @@
+import uuid
 from abc import ABC
 from typing import Set, TypeVar
 
+from aioxmpp import JID
 from pydantic import BaseModel as PydanticModel
 
 T = TypeVar('T')
@@ -32,3 +34,11 @@ class BaseModel(PydanticModel):
             **kwargs
     ) -> str:
         return self.json(indent=indent, sort_keys=sort_keys, **kwargs)
+
+
+class JIDGenerator:
+    def __init__(self, domain: str) -> None:
+        self.domain = domain
+
+    def generate(self) -> JID:
+        return JID.fromstr(f"{uuid.uuid4().hex}@{self.domain}")
