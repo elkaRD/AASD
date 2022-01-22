@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Tuple
 
 
-class AbstractController(ABC):
+class AbstractMovableController(ABC):
     @abstractmethod
     def get_position(self) -> Tuple[float, float]:
         pass

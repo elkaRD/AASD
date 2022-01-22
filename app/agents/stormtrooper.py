@@ -3,7 +3,7 @@ from typing import Iterator, Union
 from aioxmpp import JID
 
 from agents.agent import Agent, Behaviour, OneShotBehaviour
-from domain.controllers.controller import AbstractController
+from domain.controllers.controller import AbstractMovableController
 from domain.controllers.drone_controller import DroneController
 from loggers import Logger
 
@@ -31,7 +31,7 @@ class StormtrooperAgent(Agent):
         def __init__(
                 self,
                 jid: JID,
-                controller: AbstractController,
+                controller: AbstractMovableController,
                 logger: Logger
         ) -> None:
             super().__init__(jid, logger)

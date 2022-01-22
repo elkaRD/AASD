@@ -1,10 +1,10 @@
 from typing import Tuple
 
-from domain.controllers.controller import AbstractController
+from domain.controllers.controller import AbstractMovableController
 from domain.environment import AbstractEnvironment
 
 
-class AnimalController(AbstractController):
+class AnimalController(AbstractMovableController):
     def __init__(self, env: AbstractEnvironment, x: float, y: float) -> None:
         self.env = env
         self.id = self.env.add_animal(x, y)
