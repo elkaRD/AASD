@@ -3,7 +3,7 @@ from typing import Iterator, Union
 from aioxmpp import JID
 
 from agents.agent import Agent, Behaviour, CyclicBehaviour, FSMBehaviour, State
-from domain.controllers.drone_controller import DroneController
+from domain.controllers.drone import DroneController
 from loggers import Logger, NullLogger
 
 CHECK_BATTERY_STATUS_STATE = "CHECK_BATTERY_STATUS_STATE"

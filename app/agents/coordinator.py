@@ -3,7 +3,7 @@ from typing import Iterator, Union
 from aioxmpp import JID
 
 from agents.agent import Agent, Behaviour, CyclicBehaviour
-from domain.controllers.drone_controller import DroneController
+from domain.controllers.drone import DroneController
 from loggers import Logger, NullLogger
 
 
