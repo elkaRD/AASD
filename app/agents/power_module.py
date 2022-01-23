@@ -3,7 +3,7 @@ from typing import Iterator, Union
 from aioxmpp import JID
 
 from agents.agent import Agent, Behaviour, CyclicBehaviour, FSMBehaviour, State
-from domain.controllers.drone_controller import DroneController
+from domain.controllers.drone import DroneController
 from loggers import Logger, NullLogger
 
 CHECK_BATTERY_STATUS_STATE = "CHECK_BATTERY_STATUS_STATE"
@@ -32,7 +32,9 @@ class PowerModuleAgent(Agent):
             self.ReceiveReportFromStation(
                 self.get_jid(), self.controller, self.get_logger()
             ),
-            self.BatteryBehaviour(self.get_jid(), self.controller, self.get_logger()),
+            self.BatteryBehaviour(
+                self.get_jid(), self.controller, self.get_logger()
+            ),
         ]
 
     class ReceiveReportFromStation(CyclicBehaviour):
@@ -67,14 +69,19 @@ class PowerModuleAgent(Agent):
             )
             self.add_state(
                 name=FLY_TO_STATION_STATE,
-                state=self.FlyToStation(self.get_jid(), controller, self.get_logger()),
+                state=self.FlyToStation(
+                    self.get_jid(), controller, self.get_logger()
+                ),
             )
             self.add_state(
                 name=CHARGE_BATTERY_STATE,
-                state=self.ChargeBattery(self.get_jid(), controller, self.get_logger()),
+                state=self.ChargeBattery(
+                    self.get_jid(), controller, self.get_logger()
+                ),
             )
             self.add_transition(
-                source=CHECK_BATTERY_STATUS_STATE, dest=CHECK_BATTERY_STATUS_STATE
+                source=CHECK_BATTERY_STATUS_STATE,
+                dest=CHECK_BATTERY_STATUS_STATE,
             )
             self.add_transition(
                 source=CHECK_BATTERY_STATUS_STATE,
@@ -85,10 +92,15 @@ class PowerModuleAgent(Agent):
                 dest=CHECK_AVAILABILITY_OF_CHARGERS_STATE,
             )
             self.add_transition(
-                source=CHECK_AVAILABILITY_OF_CHARGERS_STATE, dest=FLY_TO_STATION_STATE
+                source=CHECK_AVAILABILITY_OF_CHARGERS_STATE,
+                dest=FLY_TO_STATION_STATE,
             )
-            self.add_transition(source=FLY_TO_STATION_STATE, dest=FLY_TO_STATION_STATE)
-            self.add_transition(source=FLY_TO_STATION_STATE, dest=CHARGE_BATTERY_STATE)
+            self.add_transition(
+                source=FLY_TO_STATION_STATE, dest=FLY_TO_STATION_STATE
+            )
+            self.add_transition(
+                source=FLY_TO_STATION_STATE, dest=CHARGE_BATTERY_STATE
+            )
             self.add_transition(
                 source=CHARGE_BATTERY_STATE, dest=CHECK_BATTERY_STATUS_STATE
             )
@@ -98,19 +110,26 @@ class PowerModuleAgent(Agent):
             return NotImplemented
 
         class CheckBatteryStatus(State):
-            def __init__(self, jid: JID, controller: DroneController, logger: Logger):
+            def __init__(
+                self, jid: JID, controller: DroneController, logger: Logger
+            ):
                 super().__init__(jid, logger)
                 self.controller = controller
 
             async def run(self) -> None:
                 # TODO sleep then check battery status
-                if self.controller.get_battery_status() > LOW_BATTERY_THRESHOLD:
+                if (
+                    self.controller.get_battery_status()
+                    > LOW_BATTERY_THRESHOLD
+                ):
                     self.set_next_state(CHECK_BATTERY_STATUS_STATE)
                 else:
                     self.set_next_state(CHECK_AVAILABILITY_OF_CHARGERS_STATE)
 
         class CheckAvailabilityOfChargers(State):
-            def __init__(self, jid: JID, controller: DroneController, logger: Logger):
+            def __init__(
+                self, jid: JID, controller: DroneController, logger: Logger
+            ):
                 super().__init__(jid, logger)
                 self.controller = controller
 
@@ -124,7 +143,9 @@ class PowerModuleAgent(Agent):
                     self.set_next_state(CHECK_AVAILABILITY_OF_CHARGERS_STATE)
 
         class FlyToStation(State):
-            def __init__(self, jid: JID, controller: DroneController, logger: Logger):
+            def __init__(
+                self, jid: JID, controller: DroneController, logger: Logger
+            ):
                 super().__init__(jid, logger)
                 self.controller = controller
 
@@ -138,12 +159,17 @@ class PowerModuleAgent(Agent):
                     self.set_next_state(FLY_TO_STATION_STATE)
 
         class ChargeBattery(State):
-            def __init__(self, jid: JID, controller: DroneController, logger: Logger):
+            def __init__(
+                self, jid: JID, controller: DroneController, logger: Logger
+            ):
                 super().__init__(jid, logger)
                 self.controller = controller
 
             async def run(self) -> None:
-                if self.controller.get_battery_status() > CHARGED_BATTERY_THRESHOLD:
+                if (
+                    self.controller.get_battery_status()
+                    > CHARGED_BATTERY_THRESHOLD
+                ):
                     self.set_next_state(CHECK_BATTERY_STATUS_STATE)
                 else:
                     # TODO sleep

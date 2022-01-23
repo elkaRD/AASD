@@ -3,7 +3,7 @@ from typing import Iterator, Union
 from aioxmpp import JID
 
 from agents.agent import Agent, Behaviour, CyclicBehaviour
-from domain.controllers.drone_controller import DroneController
+from domain.controllers.drone import DroneController
 from loggers import Logger, NullLogger
 
 
@@ -19,7 +19,9 @@ class CoordinatorAgent(Agent):
         self.controller = controller
 
     def get_behaviours(self) -> Iterator[Behaviour]:
-        return [self.Coordinate(self.get_jid(), self.controller, self.get_logger())]
+        return [
+            self.Coordinate(self.get_jid(), self.controller, self.get_logger())
+        ]
 
     class Coordinate(CyclicBehaviour):
         def __init__(
