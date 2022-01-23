@@ -24,7 +24,9 @@ class BaseStationAgent(Agent):
     ) -> None:
         super().__init__(jid, password, logger)
         self.server_jid = JID.fromstr(str(server_jid))
-        self.power_module_jids = [JID.fromstr(str(jid)) for jid in power_module_jids]
+        self.power_module_jids = [
+            JID.fromstr(str(jid)) for jid in power_module_jids
+        ]
         self.controller = controller
 
     def get_behaviours(self) -> Iterator[Behaviour]:
@@ -62,11 +64,16 @@ class BaseStationAgent(Agent):
                 self.log(
                     f"New request from {message.sender}:\n{content.pretty_print()}"
                 )
-                reply = ChargingResponseBody(charging_available=True).make_response(
-                    message
+                available = any(
+                    occupation is None
+                    for occupation in self.controller.get_docks_occupation()
                 )
-                await self.send(reply)
-                self.log(f"Reply sent to {reply.to}")
+                if available:
+                    reply = ChargingResponseBody(
+                        charging_available=True
+                    ).make_response(message)
+                    await self.send(reply)
+                    self.log(f"Reply sent to {reply.to}")
 
     class SendReportToServer(PeriodicBehaviour):
         def __init__(
