@@ -21,7 +21,7 @@ def test_help_request():
         "performative": "request",
         "language": "JSON",
         "ontology": "aasd_drones_boarder",
-        "body_type": "HelpRequestBody",
+        "type": "HelpRequestBody",
     }
 
     after_deserialization = HelpRequestBody.parse_raw(message.body)
@@ -46,7 +46,7 @@ def test_help_offer():
         "performative": "agree",
         "language": "JSON",
         "ontology": "aasd_drones_boarder",
-        "body_type": "HelpOfferBody",
+        "type": "HelpOfferBody",
     }
 
     after_deserialization = HelpOfferBody.parse_raw(message.body)
@@ -66,7 +66,7 @@ def test_help_offer_response():
         "performative": "inform",
         "language": "JSON",
         "ontology": "aasd_drones_boarder",
-        "body_type": "HelpResponseBody",
+        "type": "HelpResponseBody",
     }
 
     after_deserialization = HelpResponseBody.parse_raw(message.body)
@@ -109,7 +109,7 @@ def test_sector_cleared_report():
         "performative": "inform",
         "language": "JSON",
         "ontology": "aasd_drones_boarder",
-        "body_type": "SectorClearedReportBody",
+        "type": "SectorClearedReportBody",
     }
 
     after_deserialization = SectorClearedReportBody.parse_raw(message.body)
@@ -129,7 +129,7 @@ def test_sector_cleared_recieved():
         "performative": "agree",
         "language": "JSON",
         "ontology": "aasd_drones_boarder",
-        "body_type": "SectorClearedRecievedBody",
+        "type": "SectorClearedRecievedBody",
     }
 
     after_deserialization = SectorClearedRecievedBody.parse_raw(message.body)
@@ -153,7 +153,7 @@ def test_searching_status():
         "performative": "inform",
         "language": "JSON",
         "ontology": "aasd_drones_boarder",
-        "body_type": "SearchingStatusBody",
+        "type": "SearchingStatusBody",
     }
     after_deserialization = SearchingStatusBody.parse_raw(message.body)
     assert message_body == after_deserialization
@@ -183,7 +183,7 @@ def test_searching_directives():
         "performative": "inform",
         "language": "JSON",
         "ontology": "aasd_drones_boarder",
-        "body_type": "SearchingDirectivesBody",
+        "type": "SearchingDirectivesBody",
     }
     after_deserialization = SearchingDirectivesBody.parse_raw(message.body)
     assert after_deserialization.keep_schedule is True
@@ -199,7 +199,7 @@ def test_searching_directives_with_new_coords():
         "performative": "inform",
         "language": "JSON",
         "ontology": "aasd_drones_boarder",
-        "body_type": "SearchingDirectivesBody",
+        "type": "SearchingDirectivesBody",
     }
     after_deserialization = SearchingDirectivesBody.parse_raw(message.body)
     assert after_deserialization.keep_schedule is False
@@ -224,7 +224,7 @@ def test_dock_occupation_report():
         "performative": "inform",
         "language": "JSON",
         "ontology": "aasd_drones_boarder",
-        "body_type": "DockOccupationReportBody",
+        "type": "DockOccupationReportBody",
     }
     after_deserialization = DockOccupationReportBody.parse_raw(message.body)
     assert message_body == after_deserialization
@@ -241,7 +241,7 @@ def test_charging_request():
         "performative": "request",
         "language": "JSON",
         "ontology": "aasd_drones_boarder",
-        "body_type": "ChargingRequestBody",
+        "type": "ChargingRequestBody",
     }
     after_deserialization = ChargingRequestBody.parse_raw(message.body)
     assert message_body == after_deserialization
@@ -258,7 +258,7 @@ def test_charging_response():
         "performative": "agree",
         "language": "JSON",
         "ontology": "aasd_drones_boarder",
-        "body_type": "ChargingResponseBody",
+        "type": "ChargingResponseBody",
     }
     after_deserialization = ChargingResponseBody.parse_raw(message.body)
     assert message_body == after_deserialization
