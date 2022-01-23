@@ -36,7 +36,7 @@ class Dock(BaseModel):
 
 class MessageBody(BaseModel, Typable):
     @classmethod
-    def parse(cls, message: SpadeMessage) -> "MessageBody":
+    def parse(cls, message: SpadeMessage):
         subclass = cls.for_type(message.metadata["type"])
         params = json.loads(message.body)
         return subclass.__call__(**params)
@@ -45,11 +45,16 @@ class MessageBody(BaseModel, Typable):
         self, to: Union[str, JID], sender: Union[str, JID]
     ) -> SpadeMessage:
         return SpadeMessage(
-            to=str(to), sender=str(sender), body=self.json(), metadata=self.metadata
+            to=str(to),
+            sender=str(sender),
+            body=self.json(),
+            metadata=self.metadata,
         )
 
     def make_response(self, message: SpadeMessage) -> SpadeMessage:
-        return self.make_message(to=str(message.sender), sender=str(message.to))
+        return self.make_message(
+            to=str(message.sender), sender=str(message.to)
+        )
 
     @property
     @abstractmethod
