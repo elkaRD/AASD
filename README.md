@@ -3,7 +3,7 @@
 ## Local setup
 
 ```shell
-cd client
+cd app
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
@@ -12,7 +12,7 @@ python -m pip install -r requirements.txt
 or
 
 ```shell
-cd client
+cd app
 conda env create -f environment.yml
 conda activate boarder
 python -m pip install -r requirements.txt
