@@ -1,3 +1,4 @@
+import asyncio
 from typing import Iterator, Optional, Tuple, Union
 
 from aioxmpp import JID
@@ -6,6 +7,7 @@ from spade.template import Template
 from agents.agent import Agent, Behaviour, CyclicBehaviour, FSMBehaviour, State
 from domain.controllers.drone import DroneController
 from loggers import Logger, NullLogger
+from messages.messages import MessageBody
 
 CHECK_BATTERY_STATUS_STATE = "CHECK_BATTERY_STATUS_STATE"
 CHECK_AVAILABILITY_OF_CHARGERS_STATE = "CHECK_AVAILABILITY_OF_CHARGERS_STATE"
@@ -52,8 +54,10 @@ class PowerModuleAgent(Agent):
             self.controller = controller
 
         async def run(self) -> None:
-            # TODO add periodic checking for messages from base
-            return NotImplemented
+            message = await self.receive(timeout=60)
+            if message:
+                _ = MessageBody.parse(message)
+                self.log(f"New report from {message.sender}")
 
     class BatteryBehaviour(FSMBehaviour):
         def __init__(
@@ -112,10 +116,6 @@ class PowerModuleAgent(Agent):
                 source=CHARGE_BATTERY_STATE, dest=CHECK_BATTERY_STATUS_STATE
             )
 
-        async def run(self) -> None:
-            # TODO add periodic checking for messages from base
-            return NotImplemented
-
         class CheckBatteryStatus(State):
             def __init__(
                 self, jid: JID, controller: DroneController, logger: Logger
@@ -124,14 +124,13 @@ class PowerModuleAgent(Agent):
                 self.controller = controller
 
             async def run(self) -> None:
-                # TODO sleep then check battery status
-                if (
-                    self.controller.get_battery_status()
-                    > LOW_BATTERY_THRESHOLD
-                ):
+                battery = self.controller.get_battery_status()
+                self.log(f"Battery status: {battery}")
+                if battery > LOW_BATTERY_THRESHOLD:
                     self.set_next_state(CHECK_BATTERY_STATUS_STATE)
                 else:
                     self.set_next_state(CHECK_AVAILABILITY_OF_CHARGERS_STATE)
+                await asyncio.sleep(10)
 
         class CheckAvailabilityOfChargers(State):
             def __init__(
@@ -141,12 +140,10 @@ class PowerModuleAgent(Agent):
                 self.controller = controller
 
             async def run(self) -> None:
-                # TODO send request to base for available charger slots
                 CHARGER_SLOTS_AVAILABLE = True
                 if CHARGER_SLOTS_AVAILABLE:
                     self.set_next_state(FLY_TO_STATION_STATE)
                 else:
-                    # TODO sleep
                     self.set_next_state(CHECK_AVAILABILITY_OF_CHARGERS_STATE)
 
         class FlyToStation(State):
@@ -157,12 +154,10 @@ class PowerModuleAgent(Agent):
                 self.controller = controller
 
             async def run(self) -> None:
-                # TODO move to station location, until you get there
                 YOU_ARE_AT_STATION = True
                 if YOU_ARE_AT_STATION:
                     self.set_next_state(CHARGE_BATTERY_STATE)
                 else:
-                    # TODO move
                     self.set_next_state(FLY_TO_STATION_STATE)
 
         class ChargeBattery(State):
@@ -179,5 +174,4 @@ class PowerModuleAgent(Agent):
                 ):
                     self.set_next_state(CHECK_BATTERY_STATUS_STATE)
                 else:
-                    # TODO sleep
                     self.set_next_state(CHARGE_BATTERY_STATE)

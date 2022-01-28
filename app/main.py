@@ -3,6 +3,7 @@ import time
 
 from agents.base_station import BaseStationAgent
 from agents.coordinator import CoordinatorAgent
+from agents.power_module import PowerModuleAgent
 from agents.scout import ScoutAgent
 from agents.server import ServerAgent
 from domain.controllers.drone import DroneController
@@ -36,10 +37,11 @@ if __name__ == "__main__":
 
     logger = ConsoleLogger()
 
-    coordinator_jid = jid_generator.generate()
-    scout_jid = jid_generator.generate()
     server_jid = jid_generator.generate()
     base_station_jid = jid_generator.generate()
+    power_module_jid = jid_generator.generate()
+    coordinator_jid = jid_generator.generate()
+    scout_jid = jid_generator.generate()
 
     agents = [
         ServerAgent(server_jid, "password", logger),
@@ -50,6 +52,9 @@ if __name__ == "__main__":
             [],
             base_station_controller,
             logger,
+        ),
+        PowerModuleAgent(
+            power_module_jid, "password", drone_controller, logger
         ),
         CoordinatorAgent(
             coordinator_jid, "password", drone_controller, logger
