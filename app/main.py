@@ -1,3 +1,4 @@
+import os
 import time
 
 from agents.base_station import BaseStationAgent
@@ -19,8 +20,10 @@ if __name__ == "__main__":
     jid_generator = JIDGenerator(xmpp_server.domain)
 
     environment = Environment()
-    osc_client = OSCClientThread(environment)
-    osc_client.start()
+
+    if os.getenv("BOARDER_VISUALIZATION"):
+        osc_client = OSCClientThread(environment)
+        osc_client.start()
 
     drone_id = environment.add_drone(5.0, 5.0)
     environment.add_animal(1.0, 1.0)

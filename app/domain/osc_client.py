@@ -1,3 +1,4 @@
+import os
 import time
 import threading
 
@@ -5,10 +6,9 @@ from pythonosc.udp_client import SimpleUDPClient
 
 from domain.environment import AbstractEnvironment
 
-
 SLEEP_FOR = 1
-ADDRS = "host.docker.internal"
-PORT = 1337
+ADDRS = os.getenv("OSC_ADDRESS", "host.docker.internal")
+PORT = int(os.getenv("OSC_PORT", 1337))
 
 
 class OSCClientThread(threading.Thread):
@@ -17,7 +17,7 @@ class OSCClientThread(threading.Thread):
         self.running = False
         self.env = env
         self.client = SimpleUDPClient(ADDRS, PORT)
-    
+
     def run(self) -> None:
         while True:
             self.send_data()
