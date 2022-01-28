@@ -1,6 +1,7 @@
-from typing import Iterator, Union
+from typing import Iterator, Optional, Tuple, Union
 
 from aioxmpp import JID
+from spade.template import Template
 
 from agents.agent import Agent, Behaviour, OneShotBehaviour
 from domain.controllers.controller import AbstractMovableController
@@ -15,10 +16,13 @@ class StormtrooperAgent(Agent):
         super().__init__(jid, password)
         self.controller = controller
 
-    def get_behaviours(self) -> Iterator[Behaviour]:
+    def get_behaviours(self) -> Iterator[Tuple[Behaviour, Optional[Template]]]:
         return [
-            self.MockBehaviour(
-                self.get_jid(), self.controller, self.get_logger()
+            (
+                self.MockBehaviour(
+                    self.get_jid(), self.controller, self.get_logger()
+                ),
+                None,
             )
         ]
 

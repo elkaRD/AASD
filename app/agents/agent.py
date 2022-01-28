@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Iterator, Optional, Union
+from typing import Iterator, Optional, Tuple, Union
 
 from aioxmpp import JID
 from spade import agent as sa, behaviour as sb
+from spade.template import Template
 
 from loggers import Logger, NullLogger
 
@@ -75,7 +76,9 @@ class PeriodicBehaviour(sb.PeriodicBehaviour, WithJIDLogging, ABC):
 
 
 class TimeoutBehaviour(sb.TimeoutBehaviour, WithJIDLogging, ABC):
-    def __init__(self, jid: JID, start_at: datetime, logger: Logger = NullLogger()):
+    def __init__(
+        self, jid: JID, start_at: datetime, logger: Logger = NullLogger()
+    ):
         super().__init__(start_at)
         self._jid = jid
         self._logger = logger
@@ -118,7 +121,10 @@ Behaviour = sb.CyclicBehaviour
 
 class Agent(sa.Agent, WithJIDLogging, ABC):
     def __init__(
-        self, jid: Union[str, JID], password: str, logger: Logger = NullLogger()
+        self,
+        jid: Union[str, JID],
+        password: str,
+        logger: Logger = NullLogger(),
     ):
         super().__init__(str(jid), password)
         self._logger = logger
@@ -130,10 +136,10 @@ class Agent(sa.Agent, WithJIDLogging, ABC):
         return self._logger
 
     @abstractmethod
-    def get_behaviours(self) -> Iterator[Behaviour]:
+    def get_behaviours(self) -> Iterator[Tuple[Behaviour, Optional[Template]]]:
         pass
 
     async def setup(self) -> None:
         self.log(f"Starting")
-        for behaviour in self.get_behaviours():
-            self.add_behaviour(behaviour)
+        for behaviour, template in self.get_behaviours():
+            self.add_behaviour(behaviour, template)

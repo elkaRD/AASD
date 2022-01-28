@@ -1,7 +1,10 @@
 import time
 
 from agents.base_station import BaseStationAgent
+from agents.coordinator import CoordinatorAgent
+from agents.scout import ScoutAgent
 from agents.server import ServerAgent
+from domain.controllers.drone import DroneController
 from domain.controllers.station import BaseStationController
 from domain.environment import Environment
 from loggers import ConsoleLogger
@@ -15,33 +18,51 @@ if __name__ == "__main__":
     jid_generator = JIDGenerator(xmpp_server.domain)
 
     environment = Environment()
-    controller = BaseStationController(environment)
 
-    environment.add_drone(0.0, 0.0)
+    drone_id = environment.add_drone(5.0, 5.0)
+    environment.add_animal(1.0, 1.0)
+    environment.add_animal(7.0, 8.0)
+    environment.add_animal(9.0, 9.0)
     environment.add_base_station_dock()
+
+    drone_controller = DroneController(environment, drone_id)
+    base_station_controller = BaseStationController(environment)
 
     logger = ConsoleLogger()
 
-    server = ServerAgent(jid_generator.generate(), "password", logger)
-    station = BaseStationAgent(
-        jid_generator.generate(),
-        "password",
-        server.jid,
-        [],
-        controller,
-        logger,
-    )
+    coordinator_jid = jid_generator.generate()
+    scout_jid = jid_generator.generate()
+    server_jid = jid_generator.generate()
+    base_station_jid = jid_generator.generate()
 
-    server.start().result()
-    station.start()
+    agents = [
+        ServerAgent(server_jid, "password", logger),
+        BaseStationAgent(
+            base_station_jid,
+            "password",
+            server_jid,
+            [],
+            base_station_controller,
+            logger,
+        ),
+        CoordinatorAgent(
+            coordinator_jid, "password", drone_controller, logger
+        ),
+        ScoutAgent(
+            scout_jid, coordinator_jid, "password", drone_controller, logger
+        ),
+    ]
 
-    while server.is_alive():
+    for agent in agents:
+        agent.start().result()
+
+    while True:
         try:
             environment.step()
-            time.sleep(1)
+            time.sleep(0.1)
         except KeyboardInterrupt:
-            server.stop()
-            station.stop()
+            for agent in agents:
+                agent.stop()
             break
 
     logger.log("Finished")

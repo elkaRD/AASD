@@ -1,13 +1,18 @@
 from asyncio import sleep
-from typing import Iterator, Sequence, Union
+from typing import Iterator, Optional, Sequence, Tuple, Union
 
 from aioxmpp import JID
+from spade.template import Template
 
 from agents.agent import Agent, Behaviour, CyclicBehaviour, PeriodicBehaviour
 from domain.controllers.station import BaseStationController
 from loggers import Logger, NullLogger
 from messages import Dock, DockOccupationReportBody, Drone
-from messages.messages import ChargingResponseBody, MessageBody
+from messages.messages import (
+    ChargingRequestBody,
+    ChargingResponseBody,
+    MessageBody,
+)
 
 SENDING_REPORT_PERIOD = 10
 
@@ -29,24 +34,33 @@ class BaseStationAgent(Agent):
         ]
         self.controller = controller
 
-    def get_behaviours(self) -> Iterator[Behaviour]:
+    def get_behaviours(self) -> Iterator[Tuple[Behaviour, Optional[Template]]]:
         return [
-            self.CheckAvailabilityOfChargers(
-                self.get_jid(), self.controller, self.get_logger()
+            (
+                self.CheckAvailabilityOfChargers(
+                    self.get_jid(), self.controller, self.get_logger()
+                ),
+                Template(metadata=ChargingRequestBody.metadata()),
             ),
-            self.SendReportToServer(
-                self.get_jid(),
-                self.server_jid,
-                SENDING_REPORT_PERIOD,
-                self.controller,
-                self.get_logger(),
+            (
+                self.SendReportToServer(
+                    self.get_jid(),
+                    self.server_jid,
+                    SENDING_REPORT_PERIOD,
+                    self.controller,
+                    self.get_logger(),
+                ),
+                None,
             ),
-            self.SendReportToPowerModules(
-                self.get_jid(),
-                self.power_module_jids,
-                SENDING_REPORT_PERIOD,
-                self.controller,
-                self.get_logger(),
+            (
+                self.SendReportToPowerModules(
+                    self.get_jid(),
+                    self.power_module_jids,
+                    SENDING_REPORT_PERIOD,
+                    self.controller,
+                    self.get_logger(),
+                ),
+                None,
             ),
         ]
 
@@ -60,7 +74,7 @@ class BaseStationAgent(Agent):
         async def run(self) -> None:
             message = await self.receive(60)
             if message:
-                content = MessageBody.parse(message)
+                content: ChargingRequestBody = MessageBody.parse(message)
                 self.log(
                     f"New request from {message.sender}:\n{content.pretty_print()}"
                 )
