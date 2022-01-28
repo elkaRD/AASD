@@ -48,7 +48,7 @@ class MessageBody(BaseModel, Typable):
             to=str(to),
             sender=str(sender),
             body=self.json(),
-            metadata=self.metadata,
+            metadata=self.metadata(),
         )
 
     def make_response(self, message: SpadeMessage) -> SpadeMessage:
@@ -56,23 +56,22 @@ class MessageBody(BaseModel, Typable):
             to=str(message.sender), sender=str(message.to)
         )
 
-    @property
+    @classmethod
     @abstractmethod
-    def performative(self) -> str:
+    def performative(cls) -> str:
         pass
 
     @classmethod
-    @property
     def type(cls) -> str:
         return cls.__name__
 
-    @property
-    def metadata(self) -> Dict[str, str]:
+    @classmethod
+    def metadata(cls) -> Dict[str, str]:
         return {
             "ontology": ONTOLOGY,
             "language": LANGUAGE,
-            "performative": self.performative,
-            "type": self.type,
+            "performative": cls.performative(),
+            "type": cls.type(),
         }
 
 
@@ -86,8 +85,8 @@ class HelpRequestBody(MessageBody):
     position: Coordinates
     urgency: UrgencyEnum
 
-    @property
-    def performative(self) -> str:
+    @classmethod
+    def performative(cls) -> str:
         return "request"
 
 
@@ -98,8 +97,8 @@ class HelpOfferBody(MessageBody):
     position: Coordinates
     eta: float
 
-    @property
-    def performative(self) -> str:
+    @classmethod
+    def performative(cls) -> str:
         return "agree"
 
 
@@ -108,8 +107,8 @@ class HelpResponseBody(MessageBody):
 
     help_accepted: bool
 
-    @property
-    def performative(self) -> str:
+    @classmethod
+    def performative(cls) -> str:
         return "inform"
 
 
@@ -123,8 +122,8 @@ class SectorClearedReportBody(MessageBody):
     position: Coordinates
     seconds_spent: float
 
-    @property
-    def performative(self) -> str:
+    @classmethod
+    def performative(cls) -> str:
         return "inform"
 
 
@@ -133,8 +132,8 @@ class SectorClearedRecievedBody(MessageBody):
 
     accepted: bool
 
-    @property
-    def performative(self) -> str:
+    @classmethod
+    def performative(cls) -> str:
         return "agree"
 
 
@@ -149,8 +148,8 @@ class SearchingStatusBody(MessageBody):
     boars_positions: List[Coordinates]
     heading_towards: Coordinates
 
-    @property
-    def performative(self) -> str:
+    @classmethod
+    def performative(cls) -> str:
         return "inform"
 
 
@@ -160,8 +159,8 @@ class SearchingDirectivesBody(MessageBody):
     keep_schedule: bool
     change_direction: Optional[Coordinates]
 
-    @property
-    def performative(self) -> str:
+    @classmethod
+    def performative(cls) -> str:
         return "inform"
 
 
@@ -174,8 +173,8 @@ class DockOccupationReportBody(MessageBody):
     total_docks: int
     status: List[Dock]
 
-    @property
-    def performative(self) -> str:
+    @classmethod
+    def performative(cls) -> str:
         return "inform"
 
 
@@ -188,8 +187,8 @@ class ChargingRequestBody(MessageBody):
     remaining_time_on_battery: float
     distance_in_seconds: float
 
-    @property
-    def performative(self) -> str:
+    @classmethod
+    def performative(cls) -> str:
         return "request"
 
 
@@ -199,6 +198,6 @@ class ChargingResponseBody(MessageBody):
     charging_available: bool
     allocated_dock: Optional[Dock]
 
-    @property
-    def performative(self) -> str:
+    @classmethod
+    def performative(cls) -> str:
         return "agree"

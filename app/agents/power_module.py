@@ -1,6 +1,7 @@
-from typing import Iterator, Union
+from typing import Iterator, Optional, Tuple, Union
 
 from aioxmpp import JID
+from spade.template import Template
 
 from agents.agent import Agent, Behaviour, CyclicBehaviour, FSMBehaviour, State
 from domain.controllers.drone import DroneController
@@ -27,13 +28,19 @@ class PowerModuleAgent(Agent):
         super().__init__(jid, password, logger)
         self.controller = controller
 
-    def get_behaviours(self) -> Iterator[Behaviour]:
+    def get_behaviours(self) -> Iterator[Tuple[Behaviour, Optional[Template]]]:
         return [
-            self.ReceiveReportFromStation(
-                self.get_jid(), self.controller, self.get_logger()
+            (
+                self.ReceiveReportFromStation(
+                    self.get_jid(), self.controller, self.get_logger()
+                ),
+                None,
             ),
-            self.BatteryBehaviour(
-                self.get_jid(), self.controller, self.get_logger()
+            (
+                self.BatteryBehaviour(
+                    self.get_jid(), self.controller, self.get_logger()
+                ),
+                None,
             ),
         ]
 

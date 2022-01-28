@@ -18,11 +18,13 @@ class Typable(ABC):
     @classmethod
     def for_type(cls: T, type: str) -> T:
         subclass_mapping = {
-            subclass.type: subclass for subclass in cls.all_subclasses()
+            subclass.type(): subclass for subclass in cls.all_subclasses()
         }
         return subclass_mapping[type]
 
 
 class BaseModel(PydanticModel):
-    def pretty_print(self, indent: int = 4, sort_keys: bool = True, **kwargs) -> str:
+    def pretty_print(
+        self, indent: int = 4, sort_keys: bool = True, **kwargs
+    ) -> str:
         return self.json(indent=indent, sort_keys=sort_keys, **kwargs)

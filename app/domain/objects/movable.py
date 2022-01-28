@@ -11,5 +11,5 @@ class AbstractMovable(ABC):
         return self.x, self.y
 
     def move(self, x: float, y: float) -> None:
-        self.x += x
-        self.y += y
+        self.x = x
+        self.y = y
