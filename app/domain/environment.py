@@ -18,6 +18,10 @@ class AbstractEnvironment(ABC):
         pass
 
     @abstractmethod
+    def add_base_station_dock(self) -> int:
+        pass
+
+    @abstractmethod
     def get_drone_position(self, drone_id: int) -> Tuple[float, float]:
         pass
 
@@ -34,13 +38,27 @@ class AbstractEnvironment(ABC):
         pass
 
     @abstractmethod
-    def detect_wild_animals(
-        self, drone_id: int, radius: float
-    ) -> Collection[Tuple[float, float]]:
+    def chase_away_animal(self, animal_id: int) -> None:
+        pass
+
+    @abstractmethod
+    def distance_between(self, obj1: Tuple, obj2: Tuple) -> float:
+        pass
+
+    @abstractmethod
+    def detect_wild_animals(self, drone_id: int, radius: float = 10) -> Collection[Tuple[float, float]]:
+        pass
+
+    @abstractmethod
+    def chase_away_wild_animals(self, radius: float = 5) -> None:
         pass
 
     @abstractmethod
     def get_base_station_docks_occupation(self) -> List[Optional[int]]:
+        pass
+
+    @abstractmethod
+    def step(self) -> None:
         pass
 
 
@@ -80,24 +98,31 @@ class Environment(AbstractEnvironment):
     def move_animal(self, animal_id: int, x: float, y: float) -> None:
         self.animals[animal_id].move(x, y)
 
-    def detect_wild_animals(
-        self, drone_id: int, radius: float
-    ) -> Collection[Tuple[float, float]]:
+    def chase_away_animal(self, animal_id: int) -> None:
+        self.animals.pop(animal_id)
+
+    def distance_between(self, obj1: Tuple, obj2: Tuple) -> float:
+        return sqrt((obj1[0] - obj2[0]) ** 2 + (obj1[1] - obj2[1]) ** 2)
+
+    def detect_wild_animals(self, drone_id: int, radius: float = 10) -> Collection[Tuple[float, float]]:
         drone_pos = self.get_drone_position(drone_id)
         return [
-            animal.get_position()
-            for animal in self.animals
-            if sqrt(
-                (drone_pos[0] - animal.get_position()[0]) ** 2
-                + (drone_pos[1] - animal.get_position()[1]) ** 2
-            )
-            <= radius
+            animal.get_position() for animal in self.animals
+            if self.distance_between(drone_pos, animal.get_position()) <= radius
         ]
+
+    def chase_away_wild_animals(self, radius: float = 5) -> None:
+        for drone in self.drones:
+            for animal in self.animals:
+                if self.distance_between(drone.get_position(), animal.get_position()) <= radius:
+                    animal.chase_away()
 
     def get_base_station_docks_occupation(self) -> List[Optional[int]]:
         return [slot.occupied_by for slot in self.base_station_docks]
 
     def step(self) -> None:
+        self.chase_away_wild_animals()
+
         # some random stuff just to see that things work
         if random.random() < 0.1:
             dock = random.choice(self.base_station_docks)
