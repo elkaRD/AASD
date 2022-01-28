@@ -1,3 +1,4 @@
+import os
 import time
 
 from agents.base_station import BaseStationAgent
@@ -7,6 +8,7 @@ from agents.server import ServerAgent
 from domain.controllers.drone import DroneController
 from domain.controllers.station import BaseStationController
 from domain.environment import Environment
+from domain.osc_client import OSCClientThread
 from loggers import ConsoleLogger
 from properties import SERVER_DOMAIN
 from xmpp import JIDGenerator, XMPPServer
@@ -18,6 +20,10 @@ if __name__ == "__main__":
     jid_generator = JIDGenerator(xmpp_server.domain)
 
     environment = Environment()
+
+    if os.getenv("BOARDER_VISUALIZATION"):
+        osc_client = OSCClientThread(environment)
+        osc_client.start()
 
     drone_id = environment.add_drone(5.0, 5.0)
     environment.add_animal(1.0, 1.0)
