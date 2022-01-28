@@ -58,15 +58,23 @@ class AbstractEnvironment(ABC):
         pass
 
     @abstractmethod
+    def get_field_scope(self) -> Tuple[Tuple[float, float], Tuple[float, float]]:
+        pass
+
+    @abstractmethod
     def step(self) -> None:
         pass
 
 
 class Environment(AbstractEnvironment):
-    def __init__(self) -> None:
+    def __init__(self,
+                 x_field_scope: Tuple[float, float] = (0, 100),
+                 y_field_scope: Tuple[float, float] = (0, 100)) -> None:
         self.drones: List[Drone] = []
         self.animals: List[Animal] = []
         self.base_station_docks: List[Dock] = []
+        self.x_field_scope = x_field_scope
+        self.y_field_scope = y_field_scope
 
     def add_drone(self, x: float, y: float) -> int:
         drone_id = len(self.drones)
@@ -119,6 +127,9 @@ class Environment(AbstractEnvironment):
 
     def get_base_station_docks_occupation(self) -> List[Optional[int]]:
         return [slot.occupied_by for slot in self.base_station_docks]
+
+    def get_field_scope(self) -> Tuple[Tuple[float, float], Tuple[float, float]]:
+        return self.x_field_scope, self.y_field_scope
 
     def step(self) -> None:
         self.chase_away_wild_animals()
