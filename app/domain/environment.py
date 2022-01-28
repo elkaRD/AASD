@@ -59,9 +59,9 @@ class AbstractEnvironment(ABC):
         pass
 
     @abstractmethod
-    def get_drones_positions_list() -> List[Tuple[float, float]]:
+    def get_drones_positions_list(self) -> List[Tuple[float, float]]:
         pass
-    
+
     @abstractmethod
     def get_field_scope(
         self,
@@ -69,7 +69,11 @@ class AbstractEnvironment(ABC):
         pass
 
     @abstractmethod
-    def get_animals_positions_list() -> List[Tuple[float, float]]:
+    def get_animals_positions_list(self) -> List[Tuple[float, float]]:
+        pass
+
+    @abstractmethod
+    def get_drone_battery(self, drone_id: int) -> float:
         pass
 
     @abstractmethod
@@ -166,9 +170,12 @@ class Environment(AbstractEnvironment):
 
     def step(self) -> None:
         self.chase_away_wild_animals()
-    
+
     def get_drones_positions_list(self) -> List[Tuple[float, float]]:
         return [drone.get_position() for drone in self.drones]
 
     def get_animals_positions_list(self) -> List[Tuple[float, float]]:
         return [animal.get_position() for animal in self.animals]
+
+    def get_drone_battery(self, drone_id: int) -> float:
+        return self.drones[drone_id].get_battery()

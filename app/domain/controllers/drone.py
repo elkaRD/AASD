@@ -21,4 +21,4 @@ class DroneController(AbstractMovableController):
         return self.env.detect_wild_animals(self.drone_id, radius)
 
     def get_battery_status(self) -> float:
-        return NotImplemented
+        return self.env.get_drone_battery(self.drone_id)
